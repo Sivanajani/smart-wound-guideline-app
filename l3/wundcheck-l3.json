@@ -4,7 +4,7 @@
       "en": "WundCheck — Daily wound check after surgery",
       "de": "WundCheck — Tägliche Wundkontrolle nach OP"
     },
-    "version": "0.3.4",
+    "version": "0.3.5",
     "languages": [
       "en",
       "de"
@@ -99,6 +99,11 @@
         "version": "0.3.4",
         "date": "2026-08-03",
         "changes": "Wound and discharge graphics embedded in the L3 as data URLs. The L4 is now genuinely self-contained: a single HTML file with no external assets, so the image-based wound selection works wherever the file is opened."
+      },
+      {
+        "version": "0.3.5",
+        "date": "2026-08-04",
+        "changes": "Access code in meta.access: a check is now tied to one person via a code issued by the practice — no account and no app store, so NFR-1 and persona 1 stay intact. Each code carries a prefill map (element id -> value) that seeds the once-only sections, with dates written relative to the current day (today-N) so the demo scenarios keep their day count on any presentation date. The L4 reads all of this generically and still knows no clinical element by name."
       }
     ],
     "fhir": {
@@ -148,6 +153,95 @@
       "snomed": "http://snomed.info/sct",
       "loinc": "http://loinc.org",
       "icd10": "http://hl7.org/fhir/sid/icd-10"
+    },
+    "access": {
+      "enabled": true,
+      "note": "Access is configuration, not code. The code links a check to one person WITHOUT an account or an app store install (NFR-1, persona 1). In production the code would be issued per episode of care and verified server-side; the list below exists so the prototype can be demonstrated offline.",
+      "title": {
+        "en": "Enter your access code",
+        "de": "Zugangscode eingeben"
+      },
+      "intro": {
+        "en": "You received this code from your practice when you were discharged. It links today's check to your record — no account and no app installation needed.",
+        "de": "Diesen Code haben Sie bei der Entlassung von Ihrer Praxis erhalten. Er verknüpft die heutige Kontrolle mit Ihrer Akte — ohne Konto und ohne App-Installation."
+      },
+      "placeholder": "WC-0000-0000",
+      "submit": {
+        "en": "Unlock",
+        "de": "Freischalten"
+      },
+      "lock": {
+        "en": "Lock",
+        "de": "Sperren"
+      },
+      "error": {
+        "en": "This access code is not valid. Please check the letter from your practice.",
+        "de": "Dieser Zugangscode ist ungültig. Bitte prüfen Sie das Schreiben Ihrer Praxis."
+      },
+      "welcome": {
+        "en": "Signed in as",
+        "de": "Angemeldet als"
+      },
+      "demo_label": {
+        "en": "Demo codes for this prototype",
+        "de": "Demo-Codes für diesen Prototyp"
+      },
+      "demo_note": {
+        "en": "Study prototype: the codes are listed here on purpose so the app can be tried out, and they are checked in the browser. A production system would verify the code on the server and never ship the list to the client.",
+        "de": "Studienprototyp: Die Codes stehen hier bewusst offen, damit die App ausprobiert werden kann, und werden im Browser geprüft. Ein Produktivsystem würde den Code serverseitig prüfen und die Liste nie an den Client ausliefern."
+      },
+      "codes": [
+        {
+          "code": "WC-2026-0417",
+          "name": "Peter Brunner",
+          "note": {
+            "en": "Persona 1 — knee replacement, day 4, no risk factors",
+            "de": "Persona 1 — Knieprothese, Tag 4, keine Risikofaktoren"
+          },
+          "prefill": {
+            "pat_name": "Peter Brunner",
+            "pat_dob": "1968-05-12",
+            "op_date": "today-4",
+            "op_site": 7,
+            "closure": 1,
+            "wound_class": 1,
+            "op_duration_min": 95,
+            "antibiotic_prophylaxis": 1,
+            "drainage_present": 0,
+            "diabetes": 0,
+            "smoker": 0,
+            "immunosuppr": 0,
+            "anticoag": 0,
+            "height": 178,
+            "weight": 82
+          }
+        },
+        {
+          "code": "WC-2026-0862",
+          "name": "Rita Baumann",
+          "note": {
+            "en": "Day 6 after abdominal surgery — diabetes, smoker, on anticoagulants",
+            "de": "Tag 6 nach Bauch-OP — Diabetes, Raucherin, unter Blutverdünnung"
+          },
+          "prefill": {
+            "pat_name": "Rita Baumann",
+            "pat_dob": "1955-11-02",
+            "op_date": "today-6",
+            "op_site": 3,
+            "closure": 2,
+            "wound_class": 3,
+            "op_duration_min": 140,
+            "antibiotic_prophylaxis": 1,
+            "drainage_present": 1,
+            "diabetes": 1,
+            "smoker": 1,
+            "immunosuppr": 0,
+            "anticoag": 1,
+            "height": 163,
+            "weight": 88
+          }
+        }
+      ]
     }
   },
   "sections": [
