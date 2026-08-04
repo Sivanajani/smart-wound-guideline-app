@@ -12,6 +12,10 @@
     --radius:14px; --shadow:0 1px 2px rgba(16,32,48,.06),0 6px 18px rgba(16,32,48,.06);
   }
   *{box-sizing:border-box}
+  /* `[hidden]` is only a browser-stylesheet rule, so any author `display` here
+     silently beats it and the element stays on screen. Everything this app
+     shows and hides is toggled through that attribute — make it win. */
+  [hidden]{display:none !important}
   body{margin:0;background:var(--bg);color:var(--ink);
        font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
   header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
@@ -506,7 +510,13 @@ function render(){
   const done     = stepMode && !!lastResult;
   const stepping = stepMode && !done && list.length > 0;
   bar.hidden = nav.hidden = !stepping;
+  /* In the step flow the day's actions — evaluate, send, download, new day —
+     belong to the result screen, not to every question along the way. The
+     step navigation carries the only thing that is due mid-flow. */
   document.querySelector(".actions").hidden = stepping;
+  /* Re-evaluating makes no sense once the result is up: the form that would
+     have to change is no longer on screen. */
+  document.getElementById("btnEval").hidden = done;
 
   if (stepping){
     const i = cursorAt(list);
