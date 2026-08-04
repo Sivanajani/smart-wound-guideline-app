@@ -4,7 +4,7 @@
       "en": "WundCheck — Daily wound check after surgery",
       "de": "WundCheck — Tägliche Wundkontrolle nach OP"
     },
-    "version": "0.3.5",
+    "version": "0.3.6",
     "languages": [
       "en",
       "de"
@@ -104,6 +104,11 @@
         "version": "0.3.5",
         "date": "2026-08-04",
         "changes": "Access code in meta.access: a check is now tied to one person via a code issued by the practice — no account and no app store, so NFR-1 and persona 1 stay intact. Each code carries a prefill map (element id -> value) that seeds the once-only sections, with dates written relative to the current day (today-N) so the demo scenarios keep their day count on any presentation date. The L4 reads all of this generically and still knows no clinical element by name."
+      },
+      {
+        "version": "0.3.6",
+        "date": "2026-08-04",
+        "changes": "R12 rewritten after a multi-day simulation exposed two defects the single-day test T17 could not see. B-09: the rule compared only the traffic-light colour, so two unrelated minor findings on consecutive days (numbness one day, slight bleeding under anticoagulation the next) escalated to suspected infection. B-10: it required yesterday to be exactly yellow, so after firing it fell back to yellow and re-fired every second day — a patient with stable post-operative numbness generated four alerts to the practice in eight days, the very alert fatigue the design claims to avoid. R12 now requires the same triggering rule as yesterday and yesterday to be yellow or worse. New derived element last_rule (DE-050) and a previousRule() helper; the history now also records the first-pass rule, so a persistence rule compares against the finding underneath rather than against its own output."
       }
     ],
     "fhir": {
@@ -1741,6 +1746,19 @@
       "fhir": "Observation"
     },
     {
+      "id": "last_rule",
+      "de_id": "DE-050",
+      "section": "computed",
+      "type": "calculated",
+      "label": {
+        "en": "Yesterday's triggering rule",
+        "de": "Auslösende Regel von gestern"
+      },
+      "calculation": "previousRule()",
+      "fhir": "Observation",
+      "l1_source": "Persistence criterion — same finding, not merely the same colour"
+    },
+    {
       "id": "trend_worsening",
       "de_id": "DE-048",
       "section": "computed",
@@ -1884,14 +1902,14 @@
       "decision": "wound_status",
       "priority": "orange",
       "exclusive": true,
-      "when": "classification = 'yellow' and last_classification = 'yellow'",
+      "when": "classification = 'yellow' and severityRank(last_classification) >= 1 and current_rule = last_rule",
       "output": {
-        "en": "SUSPECTED INFECTION — Second abnormal day in a row: contact your practice today.",
-        "de": "INFEKTIONSVERDACHT — Zweiter auffälliger Tag in Folge: Kontaktieren Sie heute Ihre Praxis."
+        "en": "SUSPECTED INFECTION — The same abnormal finding as yesterday: contact your practice today.",
+        "de": "INFEKTIONSVERDACHT — Derselbe auffällige Befund wie gestern: Kontaktieren Sie heute Ihre Praxis."
       },
       "annotation": {
-        "en": "A single abnormal day is tolerable; a persisting abnormal finding is not. Originally specified as 'deterioration vs. yesterday', which was unreachable — any deterioration beyond yellow already triggers a higher-priority rule. See bug B-08.",
-        "de": "Ein einzelner auffälliger Tag ist tolerabel, ein anhaltender Befund nicht. Ursprünglich als 'Verschlechterung gegenüber gestern' spezifiziert und dadurch unerreichbar — jede Verschlechterung über Gelb hinaus löst bereits eine höher priorisierte Regel aus. Siehe Bug B-08."
+        "en": "A single abnormal day is tolerable; the same finding persisting is not. Originally specified as 'deterioration vs. yesterday', which was unreachable — any deterioration beyond yellow already triggers a higher-priority rule (B-08). Two later corrections: it compared the colour only, so two unrelated minor findings on consecutive days escalated (B-09); and it required yesterday to be exactly yellow, so after firing once it fell back to yellow and re-fired every second day forever (B-10). It now requires the same triggering rule as yesterday, and yesterday to be yellow or worse, so it escalates once and stays escalated.",
+        "de": "Ein einzelner auffälliger Tag ist tolerabel, derselbe fortbestehende Befund nicht. Ursprünglich als 'Verschlechterung gegenüber gestern' spezifiziert und dadurch unerreichbar — jede Verschlechterung über Gelb hinaus löst bereits eine höher priorisierte Regel aus (B-08). Zwei spätere Korrekturen: Die Regel verglich nur die Farbe, wodurch zwei unabhängige Bagatellbefunde an Folgetagen eskalierten (B-09); und sie verlangte exakt Gelb am Vortag, wodurch sie nach dem Auslösen auf Gelb zurückfiel und jeden zweiten Tag erneut feuerte (B-10). Sie verlangt nun dieselbe auslösende Regel wie gestern und gestern gelb oder schlimmer — damit eskaliert sie einmal und bleibt eskaliert."
       },
       "reference": "CDC/NHSN — new or worsening · persistence criterion"
     },

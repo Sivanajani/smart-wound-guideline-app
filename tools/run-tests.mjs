@@ -9,15 +9,22 @@ const compile = e => String(e)
   .replace(/\band\b/g,"&&").replace(/\bor\b/g,"||").replace(/\bnot\b/g,"!")
   .replace(/(?<![<>=!])=(?!=)/g,"==");
 
+/* A history entry is {priority, base}: the traffic light of that day and the
+   rule that opened it before any escalation. A bare string is accepted as a
+   shorthand for a day whose triggering rule does not matter to the test. */
+const entry = h => typeof h === "string" ? { priority:h, base:null } : h;
+
 function makeCtx(answers, history){
-  let derived = {}, lastResult = null;
+  let derived = {}, lastResult = null, lastRule = null;
+  const prevDay = () => history.length ? entry(history[history.length-1]) : null;
   const HELP = {
     today: () => Date.now(),
     ageYears: d => d ? Math.floor((Date.now()-d)/31557600000) : null,
     daysSince: d => d ? Math.floor((Date.now()-d)/86400000) : null,
     round1: x => x==null?null:Math.round(x*10)/10,
     severityRank: p => ({green:0,yellow:1,orange:2,red:3})[p] ?? -1,
-    previousClassification: () => history.length ? history[history.length-1] : null,
+    previousClassification: () => prevDay() ? prevDay().priority : null,
+    previousRule: () => prevDay() ? prevDay().base : null,
     consecutiveDays: () => history.length+1
   };
   const scope = () => {
@@ -29,6 +36,7 @@ function makeCtx(answers, history){
       s[e.id]=v;
     }
     s.classification = lastResult;
+    s.current_rule   = lastRule;
     return s;
   };
   const evaluate = expr => {
@@ -39,7 +47,8 @@ function makeCtx(answers, history){
   };
   const recalc = () => { derived={}; for(let i=0;i<3;i++) for(const e of L3.elements)
     if(e.type==="calculated"&&e.calculation) derived[e.id]=evaluate(e.calculation); };
-  return { evaluate, recalc, setLast:p=>{lastResult=p;}, get derived(){return derived;} };
+  return { evaluate, recalc, setLast:(p,rule=null)=>{lastResult=p; lastRule=rule;},
+           get derived(){return derived;} };
 }
 
 const RANK={green:0,yellow:1,orange:2,red:3};
@@ -54,11 +63,27 @@ function classify(answers, history=[]){
              notes, grade: c.derived.southampton_grade };
   };
   const first = pass();
-  c.setLast(first.priority);
+  c.setLast(first.priority, first.rule);
   const second = pass();
   c.setLast(null);
-  return (RANK[second.priority] > RANK[first.priority]) ? second : first;
+  const win = (RANK[second.priority] > RANK[first.priority]) ? second : first;
+  return Object.assign({}, win, { base: first.rule });
 }
+
+/* Runs `days` consecutive daily checks, feeding each day's result into the
+   history exactly as the app's "New day" button does. Returns one entry per day.
+   Single-day tests cannot see how a persistence rule behaves over a course. */
+function course(days, dayAnswers){
+  const history = [], out = [];
+  for (let d = 1; d <= days; d++){
+    const r = classify(dayAnswers(d), [...history]);
+    out.push(r);
+    history.push({ priority:r.priority, base:r.base });
+  }
+  return out;
+}
+const trace = rs => rs.map(r => r.priority.toUpperCase()+"("+r.rule+")").join(" ");
+const alerts = rs => rs.filter(r => r.priority==="orange"||r.priority==="red").length;
 function visible(id, answers){
   const e = L3.elements.find(x=>x.id===id);
   const c = makeCtx(answers, []); c.recalc();
@@ -96,15 +121,34 @@ const TESTS = [
  ["T17","persistence rule R12","H-01", A({wound_state:2,redness_extent:1,op_date:dPost(4)}), null, "ORANGE (R12) after a yellow yesterday"],
  ["T18","discharge duration R11","H-01", A({secretion:1,discharge_duration_days:4,secretion_smell:0,discharge_extent:1}), r=>r.priority==="orange"&&r.rule==="R11", "ORANGE (R11)"],
  ["T19","threshold maintainability","—", A({temp:37.6}), null, "ORANGE after threshold change"],
+ ["T20","B-09 fixed — R12 needs the same finding","H-06", null, null, "day 2 stays YELLOW, no escalation"],
+ ["T21","B-10 fixed — R12 escalates once, then holds","H-06", null, null, "one escalation, no yellow/orange ping-pong"],
 ];
 
 let pass=0, fail=0; const rows=[];
 for (const [id,name,haz,ans,check,expected] of TESTS){
   let r, ok, obs;
   if (id==="T17"){
-    r = classify(ans, ["yellow"]);
+    r = classify(ans, [{priority:"yellow", base:"R6a"}]);
     ok = r.priority==="orange" && r.rule==="R12";
     obs = r.priority.toUpperCase()+" ("+r.rule+")";
+  } else if (id==="T20"){
+    /* Two unrelated minor findings on consecutive days: numbness (R7), then
+       slight bleeding under anticoagulation (R10). Same colour, different
+       cause — persistence must not be inferred from the colour alone. */
+    const rs = course(3, d => A({ op_date:dPost(4+d),
+                                  numbness: d===1?1:0,
+                                  bleeding: d===2?1:0, anticoag: d===2?1:0 }));
+    ok = rs[0].rule==="R7" && rs[1].priority==="yellow" && rs[1].rule==="R10" && alerts(rs)===0;
+    obs = trace(rs)+" · "+alerts(rs)+" alerts";
+  } else if (id==="T21"){
+    /* The same finding every day. R12 must fire on day 2 and then hold, rather
+       than dropping back to yellow and re-alerting the practice on day 4, 6, 8… */
+    const rs = course(6, d => A({ op_date:dPost(4+d), numbness:1 }));
+    const after = rs.slice(1);
+    ok = rs[0].priority==="yellow" && rs[0].rule==="R7"
+         && after.every(r => r.priority==="orange" && r.rule==="R12");
+    obs = trace(rs)+" · "+alerts(rs)+" alerts";
   } else if (id==="T19"){
     const before = classify(ans).priority;
     T.fever_orange = 37.5;
