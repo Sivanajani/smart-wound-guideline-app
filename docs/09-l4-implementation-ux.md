@@ -30,6 +30,7 @@
 ```
 wundcheck-app.html          (single file, ~56 KB, no dependencies, no build step)
    ├── L3 loader ──────────► embedded L3, or any JSON via "Load L3 file"
+   ├── Access gate ────────► validates the code and seeds the baseline from meta.access
    ├── Renderer ───────────► builds the questions from elements[], grouped by sections[]
    ├── i18n ───────────────► language switch from meta.languages, label[lang]
    ├── Expression engine ──► evaluates relevant / calculation / constraint
@@ -65,7 +66,7 @@ wundcheck-app.html          (single file, ~56 KB, no dependencies, no build step
 | Omitted | Why |
 |---|---|
 | **Photo upload / image analysis** | Image quality, lighting and skin type vary considerably; ML decisions require explanation; regulatory demands are considerably higher. Structured image selection delivers comparable data without these problems |
-| **User accounts / login** | An obstacle at first use. For the prototype the data stay local; in a rollout a token-based assignment without a password would be conceivable |
+| **User accounts / passwords** | An obstacle at first use. Replaced by the access code described in [9.5](#95-access-code--binding-a-check-to-a-person) — a token-based assignment without a password, without an account and without an app store |
 | **Push notifications** | Requires a native app or a service worker plus server. In the prototype this is replaced by the reminder given during the discharge consultation |
 | **Multilingual support** | Provided for in the L3 (`meta.language`, label structure), but only `de` is populated. Essential for a rollout, not for the prototype |
 | **A real HIS connection** | The FHIR export produces a valid bundle as a download — the interface is demonstrated without a hospital information system being required |
@@ -132,7 +133,55 @@ The honest answer: **structurally yes, semantically partly, organisationally no.
 
 ---
 
-## 9.5 Open Points
+## 9.5 Access Code — Binding a Check to a Person
+
+Up to L3 v0.3.4 the app was anonymous: anyone opening the file got an empty form. That is fine for a rendering demo but wrong as a care model — a wound check that is not tied to a person cannot be filed in a record, and an alert without a sender cannot be triaged by Sandra.
+
+### The design constraint
+
+Persona 1 rules out the obvious answer. Peter Brunner has **“no willingness to install an app or create an account"** ([02](02-personas-and-scenarios.md)), and NFR-1 turns that into a requirement. A login with e-mail and password would buy identification at the cost of the very adherence the whole project depends on.
+
+**The access code resolves this tension.** The practice issues a code with the discharge papers — the same moment at which the QR code for the app is handed over. The patient types it in once. There is no account to create, no password to remember, no app store, no e-mail address.
+
+| | Login | Access code |
+|---|---|---|
+| Registration step | ✅ required | ❌ none |
+| Password to remember | ✅ | ❌ |
+| Works from a printed discharge letter | ❌ | ✅ |
+| Binds the check to a person | ✅ | ✅ |
+| Withstands a determined attacker | ✅ | ❌ *(see below)* |
+
+### What the code does
+
+```jsonc
+// meta.access in the L3 — configuration, exactly like the FHIR endpoint
+"access": {
+  "enabled": true,
+  "codes": [{
+    "code": "WC-2026-0417",
+    "name": "Peter Brunner",
+    "prefill": { "pat_name": "Peter Brunner", "op_date": "today-4", "diabetes": 0, … }
+  }]
+}
+```
+
+Each code carries a **`prefill` map from element id to value**. On unlock, the app writes those values into the answers — which is how the once-only sections (surgery details, risk factors) arrive pre-filled from the practice rather than being retyped by a patient four days after an operation. The L4 iterates the map generically; it still knows no element by name, and [`tools/check-hardcoding.mjs`](../tools/check-hardcoding.mjs) still passes.
+
+Dates in a `prefill` may be written **relative to the current day** (`"today-4"`). A fixed date would silently drift: presented three weeks later, `days_post_op` would be 25 instead of 4, and the day-dependent rules R6a and R5 would no longer demonstrate what they are supposed to demonstrate.
+
+Locking clears the answers as well. The prototype is shown on a shared laptop, and leaving one person's entries on screen for the next user is the wrong default.
+
+### The honest limitation
+
+> **This is identification, not authentication.** The codes live in the L3 and are checked in the browser. Anyone who opens the page source can read every valid code. It binds a check to a person; it does not defend that binding against someone who wants to break it.
+
+For the prototype this is a deliberate and stated trade-off — the demo has to run offline from a single file, with no server to ask. A production system would change three things: the code is issued **per episode of care** and expires with it, it is verified **server-side** so the list never reaches the client, and it is paired with a second factor for anything beyond the patient's own record. None of that changes the L4: `meta.access` would point at a verification endpoint the same way `meta.fhir` points at a FHIR server today.
+
+The regulatory consequence is covered in [12 Impact & Regulation](12-impact-and-regulation.md).
+
+---
+
+## 9.6 Open Points
 
 - [x] New elements and rules from [05](05-l2-data-dictionary.md)/[06](06-l2-decision-logic.md) implemented in the L3 and tested (19/19)
 - [x] Outbound queue for pending FHIR transmissions implemented

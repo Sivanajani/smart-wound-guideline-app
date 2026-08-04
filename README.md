@@ -85,6 +85,15 @@ open l4/wundcheck-app.html        # macOS
 start l4\wundcheck-app.html       # Windows
 ```
 
+The app opens on an **access code** screen — in the care model the code arrives with the discharge papers, so the daily check can be filed against one person without an account, a password or an app store (see [09 §9.5](docs/09-l4-implementation-ux.md#95-access-code--binding-a-check-to-a-person)).
+
+| Code | Patient | Scenario |
+|---|---|---|
+| `WC-2026-0417` | Peter Brunner | Persona 1 — knee replacement, day 4, no risk factors |
+| `WC-2026-0862` | Rita Baumann | Day 6 after abdominal surgery — diabetes, smoker, on anticoagulants |
+
+Both codes are also listed on the screen itself and fill in with one click. Entering one pre-fills the surgery details and risk factors, so a demo starts at the daily check instead of at a blank form. **The codes are checked in the browser and are therefore public — this identifies a patient, it does not authenticate one.** The reasoning and what a production system would do differently are in [09 §9.5](docs/09-l4-implementation-ux.md#95-access-code--binding-a-check-to-a-person).
+
 The app is bilingual (EN/DE, English by default) and loads the embedded L3. Via **"Load L3 file"** ("L3-Datei laden"), any other JSON can be loaded — which makes the separation of layers demonstrable live.
 
 **Running the tests**
