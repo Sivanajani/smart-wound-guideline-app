@@ -1,0 +1,689 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "timestamp": "2026-08-04T09:37:31.123Z",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "status": "completed",
+        "questionnaire": "http://wundcheck.example/Questionnaire/wundcheck|0.3.4",
+        "subject": {
+          "reference": "Patient/example"
+        },
+        "authored": "2026-08-04T09:37:31.123Z",
+        "source": {
+          "reference": "Patient/example"
+        },
+        "item": [
+          {
+            "linkId": "pat_name",
+            "text": "Name",
+            "answer": [
+              {
+                "valueString": "Peter Brunner"
+              }
+            ]
+          },
+          {
+            "linkId": "pat_dob",
+            "text": "Date of birth",
+            "answer": [
+              {
+                "valueDate": "1968-04-12"
+              }
+            ]
+          },
+          {
+            "linkId": "op_date",
+            "text": "Date of surgery",
+            "answer": [
+              {
+                "valueDate": "2026-07-28"
+              }
+            ]
+          },
+          {
+            "linkId": "op_site",
+            "text": "Body site of the wound",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "7",
+                  "display": "Hip / leg",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "442083009"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "closure",
+            "text": "Type of wound closure",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Sutures",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "129287005"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "wound_class",
+            "text": "CDC wound classification",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Clean",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "255215009"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "diabetes",
+            "text": "Do you have diabetes?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://hl7.org/fhir/sid/icd-10",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "E10-E14"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "smoker",
+            "text": "Do you smoke?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Yes",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "77176002"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "immunosuppr",
+            "text": "Do you take medication that weakens the immune system (e.g. steroids, chemotherapy)?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "373847000"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "anticoag",
+            "text": "Do you take blood thinners?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "372862008"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "height",
+            "text": "Height (cm)",
+            "answer": [
+              {
+                "valueInteger": 178
+              }
+            ]
+          },
+          {
+            "linkId": "weight",
+            "text": "Weight (kg)",
+            "answer": [
+              {
+                "valueDecimal": 88
+              }
+            ]
+          },
+          {
+            "linkId": "temp",
+            "text": "Body temperature today (°C)",
+            "answer": [
+              {
+                "valueDecimal": 38.3
+              }
+            ]
+          },
+          {
+            "linkId": "chills",
+            "text": "Have you had chills or shivering?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "43724002"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "pain",
+            "text": "How severe is your pain? (0 = none, 10 = unbearable)",
+            "answer": [
+              {
+                "valueInteger": 6
+              }
+            ]
+          },
+          {
+            "linkId": "pain_trend",
+            "text": "Pain compared with yesterday",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Worse"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "wellbeing",
+            "text": "How do you feel overall?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Tired",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "386661006"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "nausea_vomiting",
+            "text": "Nausea or vomiting?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "422587007"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "meds_taken",
+            "text": "Have you taken your prescribed medication today?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Yes",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "182840001"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "wound_state",
+            "text": "Which picture best matches your wound today?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Markedly reddened & swollen",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "225552003"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "redness_extent",
+            "text": "How far does the redness extend?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Along the whole wound",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "247441003"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "red_streak",
+            "text": "Does a red streak run away from the wound?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "46117009"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "swelling",
+            "text": "Is the area around the wound swollen?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Markedly",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "65124004"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "warmth",
+            "text": "Does the skin around the wound feel hot?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Yes",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "707793005"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "secretion",
+            "text": "Is fluid coming out of the wound? Which picture matches?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Cloudy / purulent",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "449736006"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "secretion_smell",
+            "text": "Does the discharge smell unpleasant?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "288227007"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "discharge_extent",
+            "text": "Is the fluid coming from one small spot or along the whole wound?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "One small spot"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "discharge_duration_days",
+            "text": "For how many days has fluid been coming out?",
+            "answer": [
+              {
+                "valueInteger": 1
+              }
+            ]
+          },
+          {
+            "linkId": "bleeding",
+            "text": "Is the wound bleeding?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "131148009"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "wound_open",
+            "text": "Are the wound edges closed?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "Closed",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "225553008"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "crust",
+            "text": "Has a scab or crust formed?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "262074001"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "numbness",
+            "text": "Any new numbness or tingling at the wound?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "44077006"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "mobility_change",
+            "text": "Any new restriction of movement at the operated site?",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "No",
+                  "system": "http://snomed.info/sct",
+                  "userSelected": false,
+                  "extension": [
+                    {
+                      "url": "http://wundcheck.example/concept",
+                      "valueCode": "105504002"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "survey",
+                "display": "Survey"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "225552003",
+              "display": "Assessment of wound"
+            }
+          ],
+          "text": "WundCheck classification"
+        },
+        "subject": {
+          "reference": "Patient/example"
+        },
+        "effectiveDateTime": "2026-08-04T09:37:31.123Z",
+        "valueCodeableConcept": {
+          "text": "orange"
+        },
+        "component": [
+          {
+            "code": {
+              "text": "Triggering rule"
+            },
+            "valueString": "R4"
+          },
+          {
+            "code": {
+              "text": "L3 version"
+            },
+            "valueString": "0.3.4"
+          },
+          {
+            "code": {
+              "text": "Southampton grade"
+            },
+            "valueString": "IV"
+          },
+          {
+            "code": {
+              "text": "Days post-op"
+            },
+            "valueInteger": 7
+          },
+          {
+            "code": {
+              "text": "Risk factor count"
+            },
+            "valueInteger": 0
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Observation"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "status": "completed",
+        "priority": "urgent",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/communication-category",
+                "code": "alert",
+                "display": "Alert"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/example"
+        },
+        "sent": "2026-08-04T09:37:31.123Z",
+        "recipient": [
+          {
+            "reference": "Organization/practice"
+          }
+        ],
+        "payload": [
+          {
+            "contentString": "WundCheck ORANGE (R4): SUSPECTED INFECTION — Purulent discharge…"
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Communication"
+      }
+    }
+  ]
+}
