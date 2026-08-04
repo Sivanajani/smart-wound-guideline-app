@@ -1,19 +1,10 @@
-# Course documents / drafts — kept local for now
-*.md
-!README.md
-*.docx
-
-# BPMN models and their renderings — work in progress, not pushed
-*.bpmn
-07_BPMN_Workflow.*
-09_BPMN_App_Detailprozess.*
-
 # Build output
 node_modules/
 bundle.js
 dist/
 
 # OS / editor
+desktop.ini
 Thumbs.db
 .DS_Store
 *~
