@@ -107,7 +107,43 @@
   .demo code{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em}
   .demo .sub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
   .demo .fine{font-size:11.5px;color:var(--muted);line-height:1.5;margin:12px 0 0;font-style:italic}
-  @media(max-width:560px){ .opt{flex:1 1 100%} .opt.img{flex:1 1 46%} }
+  /* ---- one question per screen ----
+     Same DOM, same field() renderer — only the number of questions on screen
+     changes. The step cursor is an element id, so conditional logic can add or
+     remove questions between steps without the position drifting. */
+  .stepbar{max-width:860px;margin:0 auto 20px;padding:0 20px}
+  .steptop{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .stepsec{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+  .stepcount{margin-left:auto;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .track{height:5px;border-radius:999px;background:var(--line);overflow:hidden}
+  .track i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .18s}
+  .stepnav{position:fixed;left:0;right:0;bottom:0;z-index:15;background:#fff;
+           border-top:1px solid var(--line);padding:12px 20px calc(12px + env(safe-area-inset-bottom));
+           display:flex;gap:10px;justify-content:center}
+  .stepnav > *{max-width:410px;flex:1 1 0}
+  .stepnav button{min-height:52px}
+  body.stepping main{padding-bottom:104px}
+  body.stepping .q{border:0;box-shadow:none;background:transparent;padding:0}
+  body.stepping .q > label.lbl{font-size:20px;line-height:1.35;font-weight:650;margin-bottom:18px}
+  body.stepping .opt{flex:1 1 100%;padding:15px 16px;font-size:16.5px;min-height:56px}
+  body.stepping .opt.img{flex:1 1 46%;min-height:0}
+  body.stepping .opt.img img{height:118px}
+  body.stepping input[type=text],body.stepping input[type=number],body.stepping input[type=date]{
+    padding:15px 14px;font-size:17px}
+  body.stepping .pill{display:none}
+  .modebtn{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;
+           padding:5px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .modebtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  @media(max-width:560px){
+    .opt{flex:1 1 100%} .opt.img{flex:1 1 46%}
+    .bar{padding:10px 14px;gap:8px}
+    main{padding:18px 14px 80px}
+    .stepbar{padding:0 14px}
+    .stepnav{padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+    .result{padding:18px 16px}
+    .result h3{font-size:19px}
+    .who{width:100%;order:9}
+  }
 </style>
 </head>
 <body>
@@ -117,6 +153,7 @@
     <span class="ver" id="verBadge">L3 —</span>
     <span class="who" id="who"></span>
     <span class="spacer"></span>
+    <button type="button" class="modebtn" id="btnMode"></button>
     <button type="button" class="lockbtn" id="btnLock" hidden></button>
     <div class="langs" id="langs"></div>
   </div>
@@ -126,6 +163,7 @@
 
 <main id="app">
   <div class="banner" id="disclaimer"></div>
+  <div class="stepbar" id="stepbar" hidden></div>
   <form id="form" novalidate></form>
 
   <div class="actions">
@@ -138,6 +176,10 @@
   </div>
 
   <div id="output"></div>
+  <div class="stepnav" id="stepnav" hidden>
+    <button type="button" class="btn ghost" id="btnBack"></button>
+    <button type="button" class="btn primary" id="btnNext"></button>
+  </div>
 
   <details class="dev">
     <summary id="devTitle"></summary>
@@ -162,7 +204,9 @@ const UI = {
        thresholds:"Thresholds (editable — changing a value changes the CDSS, with no rebuild)",
        derived:"Derived values", sources:"L1 sources", notes:"Additional notes", fix:"Please complete the fields marked in red.",
        required:"This field is required.", day:"Day", noneYet:"— not evaluated yet —",
-       reapply:"Apply & re-evaluate", history:"Checks this session", source:"Source" },
+       reapply:"Apply & re-evaluate", history:"Checks this session", source:"Source",
+       back:"Back", next:"Next", stepOn:"One question per screen", stepOff:"All questions on one page",
+       of:"of" },
   de:{ evaluate:"Kontrolle auswerten", newDay:"Neuer Tag", fhir:"FHIR-Bundle herunterladen", send:"An Patientenakte senden", load:"L3-Datei laden",
        sending:"Sende Transaction-Bundle an", sent:"vom FHIR-Server angenommen",
        queued:"in Warteschlange — Endpunkt nicht erreichbar, wird erneut versucht", noEndpoint:"Kein FHIR-Endpunkt im L3 konfiguriert",
@@ -171,7 +215,9 @@ const UI = {
        thresholds:"Schwellenwerte (editierbar — eine Änderung verändert das CDSS, ohne Rebuild)",
        derived:"Abgeleitete Werte", sources:"L1-Quellen", notes:"Zusätzliche Hinweise", fix:"Bitte die rot markierten Felder ausfüllen.",
        required:"Dieses Feld ist erforderlich.", day:"Tag", noneYet:"— noch nicht ausgewertet —",
-       reapply:"Übernehmen & neu auswerten", history:"Kontrollen in dieser Sitzung", source:"Quelle" }
+       reapply:"Übernehmen & neu auswerten", history:"Kontrollen in dieser Sitzung", source:"Quelle",
+       back:"Zurück", next:"Weiter", stepOn:"Eine Frage pro Bildschirm", stepOff:"Alle Fragen auf einer Seite",
+       of:"von" }
 };
 
 let L3 = null, lang = "en", answers = {}, derived = {}, history = [], errors = {}, lastResult = null;
@@ -274,7 +320,7 @@ function unlock(entry){
    device, and leaving one person's entries on screen for the next one would be
    the wrong default. */
 function lock(){
-  identity = null; answers = {}; derived = {}; history = []; lastResult = null;
+  identity = null; answers = {}; derived = {}; history = []; lastResult = null; cursor = null;
   try{ sessionStorage.removeItem("wc.code"); }catch(err){}
   document.getElementById("output").innerHTML = "";
   renderGate();
@@ -361,6 +407,53 @@ function renderGate(){
   inp.focus();
 }
 
+/* ---------- one question per screen ----------
+   A phone shows a single question at a time, a laptop can show the whole form.
+   Both paths use the same field() renderer, so there is no second implementation
+   of any question type to keep in sync. */
+let stepMode = false, cursor = null;
+
+/* Everything the patient should be asked right now, in L3 order. Rebuilt on
+   every render, because answering one question can reveal or hide later ones. */
+function askable(){
+  const out = [];
+  for (const sec of L3.sections){
+    if (sec.hidden) continue;
+    if (sec.once && history.length) continue;
+    for (const e of L3.elements)
+      if (e.section === sec.id && e.type !== "calculated" && isVisible(e)) out.push({ e, sec });
+  }
+  return out;
+}
+/* The cursor is an element id, not a position: conditional logic may insert or
+   drop questions between two steps, and a numeric index would silently drift. */
+const cursorAt = list => {
+  const i = list.findIndex(q => q.e.id === cursor);
+  return i < 0 ? 0 : i;
+};
+function stepTo(list, i){
+  const c = Math.max(0, Math.min(i, list.length - 1));
+  cursor = list[c] ? list[c].e.id : null;
+}
+/* One question's own check, so "Next" can block without pulling the entire
+   form's errors onto a screen that shows a single field. */
+function stepValid(e){
+  errors = {};
+  const v = answers[e.id];
+  const empty = (v === undefined || v === "" || v === null);
+  if (e.required && empty) errors[e.id] = t("required");
+  else if (!empty && e.constraint && evaluate(e.constraint.expr) !== true)
+    errors[e.id] = tx(e.constraint.message);
+  return !errors[e.id];
+}
+function setMode(on){
+  stepMode = on;
+  document.body.classList.toggle("stepping", on);
+  if (on && !cursor){ const l = askable(); if (l.length) cursor = l[0].e.id; }
+  render();
+}
+function toTop(){ window.scrollTo({ top: 0, behavior: "smooth" }); }
+
 /* ---------- rendering ---------- */
 function render(){
   renderGate();
@@ -384,18 +477,62 @@ function render(){
 
   recalcDerived();
   const form = document.getElementById("form");
+  const bar  = document.getElementById("stepbar");
+  const nav  = document.getElementById("stepnav");
   form.innerHTML = "";
+  bar.innerHTML = "";
 
-  for (const sec of L3.sections){
-    if (sec.hidden) continue;
-    if (sec.once && history.length) continue;
-    const els = L3.elements.filter(e => e.section === sec.id && e.type !== "calculated" && isVisible(e));
-    if (!els.length) continue;
-    const s = document.createElement("section");
-    s.className = "sec";
-    s.innerHTML = "<h2>" + tx(sec.title) + "</h2>";
-    els.forEach(e => s.appendChild(field(e)));
-    form.appendChild(s);
+  const mode = document.getElementById("btnMode");
+  mode.textContent = stepMode ? t("stepOff") : t("stepOn");
+  mode.setAttribute("aria-pressed", String(stepMode));
+
+  const list = askable();
+  /* Once a result is on screen there is nothing left to step through: the
+     recommendation and the day's actions take over the whole view. */
+  const done     = stepMode && !!lastResult;
+  const stepping = stepMode && !done && list.length > 0;
+  bar.hidden = nav.hidden = !stepping;
+  document.querySelector(".actions").hidden = stepping;
+
+  if (stepping){
+    const i = cursorAt(list);
+    cursor = list[i].e.id;
+
+    const top = document.createElement("div");
+    top.className = "steptop";
+    const sec = document.createElement("span");
+    sec.className = "stepsec";
+    sec.textContent = tx(list[i].sec.title);
+    const cnt = document.createElement("span");
+    cnt.className = "stepcount";
+    cnt.textContent = (i + 1) + " " + t("of") + " " + list.length;
+    top.append(sec, cnt);
+    const track = document.createElement("div");
+    track.className = "track";
+    const fill = document.createElement("i");
+    fill.style.width = Math.round((i + 1) / list.length * 100) + "%";
+    track.appendChild(fill);
+    bar.append(top, track);
+
+    form.appendChild(field(list[i].e));
+
+    const back = document.getElementById("btnBack");
+    back.textContent = t("back");
+    back.style.visibility = i === 0 ? "hidden" : "visible";
+    document.getElementById("btnNext").textContent =
+      (i >= list.length - 1) ? t("evaluate") : t("next");
+  } else if (!done){
+    for (const sec of L3.sections){
+      if (sec.hidden) continue;
+      if (sec.once && history.length) continue;
+      const els = L3.elements.filter(e => e.section === sec.id && e.type !== "calculated" && isVisible(e));
+      if (!els.length) continue;
+      const s = document.createElement("section");
+      s.className = "sec";
+      s.innerHTML = "<h2>" + tx(sec.title) + "</h2>";
+      els.forEach(e => s.appendChild(field(e)));
+      form.appendChild(s);
+    }
   }
   renderDev();
 }
@@ -734,6 +871,34 @@ function download(name, obj){
 document.getElementById("btnEval").onclick = () => {
   if (!validate()){ render(); alert(t("fix")); return; }
   show(classify());
+  render();
+};
+document.getElementById("btnMode").onclick = () => setMode(!stepMode);
+document.getElementById("btnBack").onclick = () => {
+  const l = askable();
+  stepTo(l, cursorAt(l) - 1);
+  errors = {};
+  render(); toTop();
+};
+document.getElementById("btnNext").onclick = () => {
+  const l = askable();
+  const i = cursorAt(l), cur = l[i];
+  if (!cur) return;
+  if (!stepValid(cur.e)){ render(); return; }
+  errors = {};
+  if (i < l.length - 1){ stepTo(l, i + 1); render(); toTop(); return; }
+  /* Last question: the whole form is checked, not just this screen. If an
+     earlier answer has since become invalid, jump back to it instead of
+     reporting an error the patient cannot see. */
+  if (!validate()){
+    const first = Object.keys(errors)[0];
+    const fresh = askable();
+    const j = fresh.findIndex(q => q.e.id === first);
+    if (j >= 0) stepTo(fresh, j);
+    render(); toTop(); return;
+  }
+  show(classify());
+  render(); toTop();
 };
 document.getElementById("btnNewDay").onclick = () => {
   if (lastResult && lastResult.rule)
@@ -744,9 +909,10 @@ document.getElementById("btnNewDay").onclick = () => {
        not know which sections are clinical and which are baseline data. */
     if (!(L3.sections.find(x => x.id === e.section) || {}).once) delete answers[e.id];
   lastResult = null;
+  cursor = null;
   document.getElementById("output").innerHTML = "";
   render();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  toTop();
 };
 document.getElementById("btnLock").onclick = () => lock();
 document.getElementById("btnFhir").onclick = () =>
@@ -759,7 +925,7 @@ document.getElementById("fileL3").onchange = ev => {
   r.onload = () => {
     try{
       L3 = JSON.parse(r.result);
-      answers = {}; derived = {}; history = []; lastResult = null; identity = null;
+      answers = {}; derived = {}; history = []; lastResult = null; identity = null; cursor = null;
       lang = (L3.meta.languages || []).includes(lang) ? lang : (L3.meta.default_language || "en");
       document.getElementById("output").innerHTML = "";
       renderGate();
@@ -785,6 +951,10 @@ const EMBEDDED_L3 = /*__L3_START__*/{"meta":{"title":{"en":"WundCheck — Daily 
     }
   }
   lang = L3.meta.default_language || "en";
+  /* A phone gets one question per screen by default; the header button switches
+     either way, so the step flow can also be shown on a laptop. */
+  stepMode = window.matchMedia("(max-width: 700px)").matches;
+  document.body.classList.toggle("stepping", stepMode);
   /* Resume within the same browser tab, so a reload mid-demo does not throw the
      code back at you. Closing the tab ends the session. */
   let resume = null;
