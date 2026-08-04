@@ -50,7 +50,7 @@ wundcheck-app.html          (single file, ~56 KB, no dependencies, no build step
 | Decision | Rationale | Persona |
 |---|---|---|
 | **Image selection instead of description** for wound appearance and discharge | Overcomes language and educational barriers; produces structured, comparable data instead of free text | Peter |
-| **One question per screen**, large touch targets | Small screens, reading glasses, possibly impaired fine motor skills after surgery | Peter |
+| **One question per screen**, large touch targets — see [9.6](#96-one-question-per-screen) | Small screens, reading glasses, possibly impaired fine motor skills after surgery | Peter |
 | **Baseline data only on first use** (gateway “First use?" / “Erste Nutzung?") | Daily use must stay under 3 minutes (NFR-3), otherwise adherence collapses | Peter |
 | **Sequence follows patient logic**, not guideline structure | First “how am I feeling", then “what does the wound look like" — inspecting the wound requires opening the dressing and therefore comes last | Peter |
 | **Colour-coded traffic light + plain-language action** | Colour alone is neither accessible (colour vision deficiency) nor action-guiding. Every colour is accompanied by a concrete sentence: “Contact your practice **today**" (“Kontaktieren Sie **heute** Ihre Praxis") | Peter |
@@ -181,7 +181,39 @@ The regulatory consequence is covered in [12 Impact & Regulation](12-impact-and-
 
 ---
 
-## 9.6 Open Points
+## 9.6 One Question Per Screen
+
+The primary device is a phone. Peter Brunner does the check in the evening, on the sofa, four days after a knee replacement, wearing reading glasses. A form of 35 questions in one scroll is the wrong shape for that, and the daily check has to stay under three minutes (NFR-3).
+
+The app therefore has **two presentations of the same form**, and the header button switches between them:
+
+| | Step flow | Single page |
+|---|---|---|
+| Default on | viewport ≤ 700 px (phone) | wider viewports |
+| Shows | one question, progress bar, Back / Next | every question, grouped by section |
+| Good for | the actual patient use case | reviewing the whole instrument, and the live demo |
+
+**Both use the same renderer.** `field()` builds a question from its L3 definition; the step flow simply asks for one of them instead of all of them. There is no second implementation of `select_one`, of the image cards or of the constraint messages that could drift out of sync with the first.
+
+### The cursor is an element id, not a position
+
+Conditional logic changes the length of the questionnaire *while it is being filled in*. Answering "is fluid coming out of the wound?" with anything other than "none" reveals three follow-up questions immediately after it. Had the step cursor been a numeric index, that insertion would have shifted every later question by three and the patient would have jumped backwards without touching anything.
+
+Holding the **id** of the current question instead makes this a non-issue: the list is rebuilt on each render, the current question is located in it by id, and *Next* means "whatever now follows this question". The regression check walks the questionnaire forwards and backwards and asserts that every required question is visited exactly once, with the follow-ups appearing in the right place.
+
+### Details that only matter on a phone
+
+- **Navigation is fixed to the bottom edge**, within thumb reach, with `env(safe-area-inset-bottom)` so it clears the home indicator on an iPhone
+- **Answer options are at least 56 px high**; the wound images grow to 118 px because a single question has the room for it
+- **The question is validated on *Next*, not on submit** — the patient learns about an implausible temperature at the moment they enter it, not fifteen questions later
+- **On the final question the button becomes *Evaluate*.** If an earlier answer has since become invalid, the app jumps back to that question rather than reporting an error on a screen that does not show the field it refers to
+- **The result replaces the flow** instead of appending to it — no scrolling to find out what the app concluded
+
+> **Open point:** with an access code the once-only sections arrive pre-filled but are still stepped through, so day 1 is 35 screens and every following day is 20. Skipping questions the practice has already answered would shorten onboarding — but it would also mean the patient never sees the data being filed under their name, which is the wrong trade to make silently.
+
+---
+
+## 9.7 Open Points
 
 - [x] New elements and rules from [05](05-l2-data-dictionary.md)/[06](06-l2-decision-logic.md) implemented in the L3 and tested (21/21)
 - [x] Outbound queue for pending FHIR transmissions implemented
