@@ -4,7 +4,7 @@
       "en": "WundCheck — Daily wound check after surgery",
       "de": "WundCheck — Tägliche Wundkontrolle nach OP"
     },
-    "version": "0.3.6",
+    "version": "0.3.7",
     "languages": [
       "en",
       "de"
@@ -44,8 +44,8 @@
       "de": "Studienprototyp FHNW MSc MI — nicht für die klinische Anwendung. Im Zweifel immer die Praxis oder den Notfalldienst kontaktieren."
     },
     "thresholds": {
-      "fever_orange": 38.0,
-      "fever_red": 39.0,
+      "fever_orange": 38,
+      "fever_red": 39,
       "pain_high": 7,
       "normal_healing_days": 3,
       "discharge_prolonged_days": 3,
@@ -109,6 +109,11 @@
         "version": "0.3.6",
         "date": "2026-08-04",
         "changes": "R12 rewritten after a multi-day simulation exposed two defects the single-day test T17 could not see. B-09: the rule compared only the traffic-light colour, so two unrelated minor findings on consecutive days (numbness one day, slight bleeding under anticoagulation the next) escalated to suspected infection. B-10: it required yesterday to be exactly yellow, so after firing it fell back to yellow and re-fired every second day — a patient with stable post-operative numbness generated four alerts to the practice in eight days, the very alert fatigue the design claims to avoid. R12 now requires the same triggering rule as yesterday and yesterday to be yellow or worse. New derived element last_rule (DE-050) and a previousRule() helper; the history now also records the first-pass rule, so a persistence rule compares against the finding underneath rather than against its own output."
+      },
+      {
+        "version": "0.3.7",
+        "date": "2026-08-04",
+        "changes": "Two additions driven by the image interaction, both content rather than code. `help` on nine questions: collapsed guidance on how to judge the finding — viewing distance and lighting, what counts as a red streak, comparing with the other side of the body, and the note that redness reads brownish or purple on darker skin. `hint` on the eight image options: a caption stating what each picture is meant to show, so the choice is described rather than intuited. Also meta.fhir.alert_recipient is now a Reference object instead of a string: the literal reference Organization/practice made the public HAPI server reject the entire transaction (HAPI-1094) whenever a Communication was present — so sending failed exactly for ORANGE and RED and silently worked for GREEN."
       }
     ],
     "fhir": {
@@ -116,7 +121,10 @@
       "endpoint": "https://hapi.fhir.org/baseR4",
       "questionnaire_canonical": "http://wundcheck.example/Questionnaire/wundcheck",
       "patient_reference": "Patient/example",
-      "alert_recipient": "Organization/practice",
+      "alert_recipient": {
+        "display": "WundCheck demo practice"
+      },
+      "alert_recipient_note": "Used verbatim as Communication.recipient[0]. A display-only Reference is deliberate for the prototype: a literal reference such as Organization/practice makes a server enforcing referential integrity reject the WHOLE transaction if that Organization does not exist — which is exactly what happened against the public HAPI test server (HAPI-1094), and it failed only for ORANGE/RED, the cases that matter most. In a hospital deployment replace this with {\"reference\": \"Organization/<id>\", \"display\": \"...\"} pointing at the practice record that already exists there.",
       "send_mode": "transaction",
       "note": "Endpoint is configuration, not code. Point it at the hospital FHIR server (or the Swiss EPD gateway) without touching the L4.",
       "observation_components": [
@@ -866,7 +874,17 @@
         "loinc": "8310-5"
       },
       "fhir": "Observation.valueQuantity",
-      "l1_source": "CDC/NHSN — deep incisional SSI, fever >38 °C"
+      "l1_source": "CDC/NHSN — deep incisional SSI, fever >38 °C",
+      "help": {
+        "en": [
+          "Measure before taking painkillers, not right after a hot drink, a shower or exercise.",
+          "Use the same method every day — ear, forehead and under the arm give different readings."
+        ],
+        "de": [
+          "Messen Sie vor der Einnahme von Schmerzmitteln, nicht direkt nach einem heissen Getränk, dem Duschen oder Bewegung.",
+          "Nutzen Sie jeden Tag dieselbe Methode — Ohr, Stirn und Achsel liefern unterschiedliche Werte."
+        ]
+      }
     },
     {
       "id": "fever",
@@ -1176,7 +1194,11 @@
             "en": "Calm & dry",
             "de": "Ruhig & trocken"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGxpbmUgeDE9IjkwIiB5MT0iMjgiIHgyPSI5MCIgeTI9IjEwMiIgc3Ryb2tlPSIjYTg1NzRhIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSIzMiIgeDI9Ijk5IiB5Mj0iNDAiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI0NSIgeDI9Ijk5IiB5Mj0iNTMiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI1OCIgeDI9Ijk5IiB5Mj0iNjYiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI3MSIgeDI9Ijk5IiB5Mj0iNzkiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI4NCIgeDI9Ijk5IiB5Mj0iOTIiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4="
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGxpbmUgeDE9IjkwIiB5MT0iMjgiIHgyPSI5MCIgeTI9IjEwMiIgc3Ryb2tlPSIjYTg1NzRhIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSIzMiIgeDI9Ijk5IiB5Mj0iNDAiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI0NSIgeDI9Ijk5IiB5Mj0iNTMiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI1OCIgeDI9Ijk5IiB5Mj0iNjYiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI3MSIgeDI9Ijk5IiB5Mj0iNzkiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8bGluZSB4MT0iODEiIHkxPSI4NCIgeDI9Ijk5IiB5Mj0iOTIiIHN0cm9rZT0iIzViNjY3NSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4=",
+          "hint": {
+            "en": "Edges closed, skin its normal colour, no fluid",
+            "de": "Ränder geschlossen, Haut normal gefärbt, keine Flüssigkeit"
+          }
         },
         {
           "value": 2,
@@ -1184,7 +1206,11 @@
             "en": "Slightly reddened",
             "de": "Leicht gerötet"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSIyMiIgcnk9IjQ4IiBmaWxsPSIjZjViMDlhIiBvcGFjaXR5PSIwLjU1Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSIxMDIiIHN0cm9rZT0iI2E4NTc0YSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iMzIiIHgyPSI5OSIgeTI9IjQwIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNDUiIHgyPSI5OSIgeTI9IjUzIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNTgiIHgyPSI5OSIgeTI9IjY2IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNzEiIHgyPSI5OSIgeTI9Ijc5IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iODQiIHgyPSI5OSIgeTI9IjkyIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+"
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSIyMiIgcnk9IjQ4IiBmaWxsPSIjZjViMDlhIiBvcGFjaXR5PSIwLjU1Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSIxMDIiIHN0cm9rZT0iI2E4NTc0YSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iMzIiIHgyPSI5OSIgeTI9IjQwIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNDUiIHgyPSI5OSIgeTI9IjUzIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNTgiIHgyPSI5OSIgeTI9IjY2IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNzEiIHgyPSI5OSIgeTI9Ijc5IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iODQiIHgyPSI5OSIgeTI9IjkyIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+",
+          "hint": {
+            "en": "A narrow reddened seam along the cut, edges still closed",
+            "de": "Schmaler geröteter Saum entlang des Schnitts, Ränder noch geschlossen"
+          }
         },
         {
           "value": 3,
@@ -1192,7 +1218,11 @@
             "en": "Markedly reddened & swollen",
             "de": "Stark gerötet & geschwollen"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSI0NiIgcnk9IjU2IiBmaWxsPSIjZWY5YTgwIiBvcGFjaXR5PSIwLjYiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSIyOCIgcnk9IjUwIiBmaWxsPSIjZTg4MzZiIiBvcGFjaXR5PSIwLjc1Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSIxMDIiIHN0cm9rZT0iI2E4NTc0YSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iMzIiIHgyPSI5OSIgeTI9IjQwIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNDUiIHgyPSI5OSIgeTI9IjUzIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNTgiIHgyPSI5OSIgeTI9IjY2IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNzEiIHgyPSI5OSIgeTI9Ijc5IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iODQiIHgyPSI5OSIgeTI9IjkyIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGNpcmNsZSBjeD0iMTAxIiBjeT0iNTgiIHI9IjQuNSIgZmlsbD0iI2U5ZDM2YiIgc3Ryb2tlPSIjY2RiNjRmIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+"
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSI0NiIgcnk9IjU2IiBmaWxsPSIjZWY5YTgwIiBvcGFjaXR5PSIwLjYiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSIyOCIgcnk9IjUwIiBmaWxsPSIjZTg4MzZiIiBvcGFjaXR5PSIwLjc1Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSIxMDIiIHN0cm9rZT0iI2E4NTc0YSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iMzIiIHgyPSI5OSIgeTI9IjQwIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNDUiIHgyPSI5OSIgeTI9IjUzIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNTgiIHgyPSI5OSIgeTI9IjY2IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iNzEiIHgyPSI5OSIgeTI9Ijc5IiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGxpbmUgeDE9IjgxIiB5MT0iODQiIHgyPSI5OSIgeTI9IjkyIiBzdHJva2U9IiM1YjY2NzUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPGNpcmNsZSBjeD0iMTAxIiBjeT0iNTgiIHI9IjQuNSIgZmlsbD0iI2U5ZDM2YiIgc3Ryb2tlPSIjY2RiNjRmIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+",
+          "hint": {
+            "en": "Redness over a wide area, the skin around it raised and swollen",
+            "de": "Rötung über einen weiten Bereich, Haut ringsum erhaben und geschwollen"
+          }
         },
         {
           "value": 4,
@@ -1200,14 +1230,32 @@
             "en": "Open / pus",
             "de": "Offen / Eiter"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSI1NCIgcnk9IjU4IiBmaWxsPSIjZWE4YTcwIiBvcGFjaXR5PSIwLjY1Ii8+CjxlbGxpcHNlIGN4PSI5MCIgY3k9IjY1IiByeD0iMzIiIHJ5PSI1MiIgZmlsbD0iI2RkNmY1NyIgb3BhY2l0eT0iMC44Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSI1NSIgc3Ryb2tlPSIjYTg1NzRhIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8ZWxsaXBzZSBjeD0iOTAiIGN5PSI2NSIgcng9IjkiIHJ5PSIxMSIgZmlsbD0iI2M5NmE1NSIvPgo8bGluZSB4MT0iOTAiIHkxPSI3NiIgeDI9IjkwIiB5Mj0iMTAyIiBzdHJva2U9IiNhODU3NGEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9IjMyIiB4Mj0iOTkiIHkyPSI0MCIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9IjQ1IiB4Mj0iOTkiIHkyPSI1MyIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9Ijg0IiB4Mj0iOTkiIHkyPSI5MiIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxlbGxpcHNlIGN4PSI5MCIgY3k9IjY1IiByeD0iNSIgcnk9IjgiIGZpbGw9IiNlOWQzNmIiLz4KPGNpcmNsZSBjeD0iODIiIGN5PSI4NCIgcj0iMy41IiBmaWxsPSIjZTlkMzZiIiBvcGFjaXR5PSIwLjkiLz4KPC9zdmc+"
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTMwIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE3NiIgaGVpZ2h0PSIxMjYiIHJ4PSIxNCIgZmlsbD0iI2Y2ZGRjOSIgc3Ryb2tlPSIjZWFjM2E4IiBzdHJva2Utd2lkdGg9IjIiLz4KPGVsbGlwc2UgY3g9IjkwIiBjeT0iNjUiIHJ4PSI1NCIgcnk9IjU4IiBmaWxsPSIjZWE4YTcwIiBvcGFjaXR5PSIwLjY1Ii8+CjxlbGxpcHNlIGN4PSI5MCIgY3k9IjY1IiByeD0iMzIiIHJ5PSI1MiIgZmlsbD0iI2RkNmY1NyIgb3BhY2l0eT0iMC44Ii8+CjxsaW5lIHgxPSI5MCIgeTE9IjI4IiB4Mj0iOTAiIHkyPSI1NSIgc3Ryb2tlPSIjYTg1NzRhIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8ZWxsaXBzZSBjeD0iOTAiIGN5PSI2NSIgcng9IjkiIHJ5PSIxMSIgZmlsbD0iI2M5NmE1NSIvPgo8bGluZSB4MT0iOTAiIHkxPSI3NiIgeDI9IjkwIiB5Mj0iMTAyIiBzdHJva2U9IiNhODU3NGEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9IjMyIiB4Mj0iOTkiIHkyPSI0MCIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9IjQ1IiB4Mj0iOTkiIHkyPSI1MyIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxsaW5lIHgxPSI4MSIgeTE9Ijg0IiB4Mj0iOTkiIHkyPSI5MiIgc3Ryb2tlPSIjNWI2Njc1IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxlbGxpcHNlIGN4PSI5MCIgY3k9IjY1IiByeD0iNSIgcnk9IjgiIGZpbGw9IiNlOWQzNmIiLz4KPGNpcmNsZSBjeD0iODIiIGN5PSI4NCIgcj0iMy41IiBmaWxsPSIjZTlkMzZiIiBvcGFjaXR5PSIwLjkiLz4KPC9zdmc+",
+          "hint": {
+            "en": "Edges parted, deeper tissue or yellowish fluid visible",
+            "de": "Ränder auseinander, tieferes Gewebe oder gelbliche Flüssigkeit sichtbar"
+          }
         }
       ],
       "terminology": {
         "snomed": "225552003"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "Southampton grades 0–V"
+      "l1_source": "Southampton grades 0–V",
+      "help": {
+        "en": [
+          "Look at the wound in good daylight, from about an arm's length away.",
+          "Compare the whole wound, not the worst single spot.",
+          "A scab or crust is normal — it does not make the wound 'worse'.",
+          "If two pictures could fit, choose the more severe one."
+        ],
+        "de": [
+          "Schauen Sie die Wunde bei gutem Tageslicht an, etwa aus einer Armlänge Abstand.",
+          "Vergleichen Sie die ganze Wunde, nicht die schlimmste einzelne Stelle.",
+          "Wundschorf ist normal — er macht die Wunde nicht 'schlechter'.",
+          "Wenn zwei Bilder passen könnten, wählen Sie das schlimmere."
+        ]
+      }
     },
     {
       "id": "redness_extent",
@@ -1260,7 +1308,21 @@
         "snomed": "247441003"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "Southampton IIa–IId"
+      "l1_source": "Southampton IIa–IId",
+      "help": {
+        "en": [
+          "You do not need to measure anything — estimate it.",
+          "'Only at the wound edge' means a narrow seam directly along the cut.",
+          "'Beyond the wound' means the redness continues into skin that looks otherwise healthy.",
+          "On darker skin redness can look brownish or purple rather than red — compare with the same spot on the other side of the body."
+        ],
+        "de": [
+          "Sie müssen nichts messen — schätzen Sie.",
+          "'Nur am Wundrand' heisst ein schmaler Saum direkt entlang des Schnitts.",
+          "'Über die Wunde hinaus' heisst, die Rötung geht in Haut über, die sonst gesund aussieht.",
+          "Auf dunklerer Haut kann Rötung eher bräunlich oder violett wirken — vergleichen Sie mit der gleichen Stelle auf der anderen Körperseite."
+        ]
+      }
     },
     {
       "id": "red_streak",
@@ -1296,6 +1358,18 @@
       "note": {
         "en": "Deliberately NOT gated by conditional logic — see bug B-03.",
         "de": "Bewusst NICHT durch conditional logic gegated — siehe Bug B-03."
+      },
+      "help": {
+        "en": [
+          "This means a line or band of redness running away from the wound, towards the trunk — not the redness around the wound itself.",
+          "It is often warm and can be tender along its length.",
+          "Please answer this even if the wound itself looks calm."
+        ],
+        "de": [
+          "Gemeint ist ein Streifen oder Band von Rötung, der von der Wunde wegzieht, Richtung Rumpf — nicht die Rötung rund um die Wunde selbst.",
+          "Er ist oft warm und kann auf ganzer Länge druckempfindlich sein.",
+          "Bitte beantworten Sie das auch, wenn die Wunde selbst ruhig aussieht."
+        ]
       }
     },
     {
@@ -1342,7 +1416,19 @@
         "snomed": "65124004"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "CDC/NHSN — localized swelling"
+      "l1_source": "CDC/NHSN — localized swelling",
+      "help": {
+        "en": [
+          "Compare with the same place on the other side of your body where you can.",
+          "Some swelling in the first days after surgery is expected.",
+          "'Severely' means the skin looks tight or shiny, or a ring or watch no longer fits."
+        ],
+        "de": [
+          "Vergleichen Sie wenn möglich mit der gleichen Stelle auf der anderen Körperseite.",
+          "Eine gewisse Schwellung in den ersten Tagen nach der Operation ist zu erwarten.",
+          "'Stark' heisst, die Haut wirkt gespannt oder glänzend, oder ein Ring bzw. eine Uhr passt nicht mehr."
+        ]
+      }
     },
     {
       "id": "warmth",
@@ -1374,7 +1460,17 @@
         "snomed": "707793005"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "CDC/NHSN — heat"
+      "l1_source": "CDC/NHSN — heat",
+      "help": {
+        "en": [
+          "Use the back of your hand and compare with the same spot on the other side of your body.",
+          "Skin that is warm right after a shower or under a dressing does not count."
+        ],
+        "de": [
+          "Nehmen Sie den Handrücken und vergleichen Sie mit der gleichen Stelle auf der anderen Körperseite.",
+          "Haut, die direkt nach dem Duschen oder unter dem Verband warm ist, zählt nicht."
+        ]
+      }
     },
     {
       "id": "secretion",
@@ -1393,7 +1489,11 @@
             "en": "None",
             "de": "Keine"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZWVmM2Y4IiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKPGxpbmUgeDE9IjE4IiB5MT0iNzIiIHgyPSI3MiIgeTI9IjE4IiBzdHJva2U9IiM4YTk3YTYiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg=="
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZWVmM2Y4IiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKPGxpbmUgeDE9IjE4IiB5MT0iNzIiIHgyPSI3MiIgeTI9IjE4IiBzdHJva2U9IiM4YTk3YTYiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==",
+          "hint": {
+            "en": "The dressing stays dry",
+            "de": "Der Verband bleibt trocken"
+          }
         },
         {
           "value": 1,
@@ -1401,7 +1501,11 @@
             "en": "Clear",
             "de": "Klar"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjY2ZlNmY3IiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKCjwvc3ZnPg=="
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjY2ZlNmY3IiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKCjwvc3ZnPg==",
+          "hint": {
+            "en": "Watery, transparent to slightly yellowish",
+            "de": "Wässrig, durchsichtig bis leicht gelblich"
+          }
         },
         {
           "value": 2,
@@ -1409,7 +1513,11 @@
             "en": "Bloody",
             "de": "Blutig"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZDE1ODRhIiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKCjwvc3ZnPg=="
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZDE1ODRhIiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgoKCjwvc3ZnPg==",
+          "hint": {
+            "en": "Reddish, like fresh or dried blood",
+            "de": "Rötlich, wie frisches oder getrocknetes Blut"
+          }
         },
         {
           "value": 3,
@@ -1417,14 +1525,32 @@
             "en": "Cloudy / purulent",
             "de": "Trüb / eitrig"
           },
-          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZGRjZjZiIiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgo8Y2lyY2xlIGN4PSIzOSIgY3k9IjU1IiByPSI0IiBmaWxsPSIjYzliODRlIi8+PGNpcmNsZSBjeD0iNTIiIGN5PSI2MiIgcj0iMyIgZmlsbD0iI2M5Yjg0ZSIvPgoKPC9zdmc+"
+          "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MCA5MCI+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI4NiIgaGVpZ2h0PSI4NiIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOWUyZWMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNDUgMTYgQzQ1IDE2IDI0IDQ0IDI0IDU4IGEyMSAyMSAwIDAgMCA0MiAwIEM2NiA0NCA0NSAxNiA0NSAxNiBaIiBmaWxsPSIjZGRjZjZiIiBzdHJva2U9IiM5ZmIyYzQiIHN0cm9rZS13aWR0aD0iMiIvPgo8Y2lyY2xlIGN4PSIzOSIgY3k9IjU1IiByPSI0IiBmaWxsPSIjYzliODRlIi8+PGNpcmNsZSBjeD0iNTIiIGN5PSI2MiIgcj0iMyIgZmlsbD0iI2M5Yjg0ZSIvPgoKPC9zdmc+",
+          "hint": {
+            "en": "Cloudy, thick, yellowish to greenish",
+            "de": "Trüb, dickflüssig, gelblich bis grünlich"
+          }
         }
       ],
       "terminology": {
         "snomed": "449736006"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "CDC/NHSN — purulent drainage · Southampton III–IV"
+      "l1_source": "CDC/NHSN — purulent drainage · Southampton III–IV",
+      "help": {
+        "en": [
+          "Judge this from the dressing or compress, not only from the wound itself.",
+          "Clear or slightly yellowish fluid is wound fluid and can be normal.",
+          "Cloudy, thick or yellow-green fluid is what we mean by purulent.",
+          "If the dressing was changed today, judge the fresh dressing."
+        ],
+        "de": [
+          "Beurteilen Sie das am Verband oder an der Kompresse, nicht nur an der Wunde selbst.",
+          "Klare oder leicht gelbliche Flüssigkeit ist Wundflüssigkeit und kann normal sein.",
+          "Trübe, dickliche oder gelbgrüne Flüssigkeit meinen wir mit eitrig.",
+          "Wenn der Verband heute gewechselt wurde, beurteilen Sie den frischen Verband."
+        ]
+      }
     },
     {
       "id": "secretion_smell",
@@ -1583,7 +1709,19 @@
         "snomed": "225553008"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "CDC/NHSN — deep incisional SSI (dehiscence)"
+      "l1_source": "CDC/NHSN — deep incisional SSI (dehiscence)",
+      "help": {
+        "en": [
+          "'Small gap' means the edges have parted a little at one point, without deeper tissue showing.",
+          "'Gaping open' means you can see into the wound.",
+          "Do not pull on the wound to check — look only."
+        ],
+        "de": [
+          "'Kleine Lücke' heisst, die Ränder sind an einer Stelle etwas auseinandergegangen, ohne dass tieferes Gewebe sichtbar wird.",
+          "'Klaffend offen' heisst, Sie können in die Wunde hineinsehen.",
+          "Ziehen Sie zum Prüfen nicht an der Wunde — nur anschauen."
+        ]
+      }
     },
     {
       "id": "crust",
@@ -1615,7 +1753,17 @@
         "snomed": "262074001"
       },
       "fhir": "Observation.valueCodeableConcept",
-      "l1_source": "Wound healing phases — see challenge C-04"
+      "l1_source": "Wound healing phases — see challenge C-04",
+      "help": {
+        "en": [
+          "A scab is dried wound fluid and blood — it is a normal sign of healing.",
+          "Do not pick it off, and keep it dry."
+        ],
+        "de": [
+          "Wundschorf ist getrocknete Wundflüssigkeit und Blut — ein normales Zeichen der Heilung.",
+          "Nicht abkratzen und trocken halten."
+        ]
+      }
     },
     {
       "id": "numbness",

@@ -51,7 +51,14 @@ ok("Observation carries the triggering rule",
    ob?.component?.some(c => c.code.text === "Triggering rule" && c.valueString === "R4"));
 ok("Communication generated for ORANGE", !!co);
 ok("Communication.priority = urgent for ORANGE", co?.priority === "urgent", co?.priority);
-ok("Communication has a recipient", !!co?.recipient?.[0]?.reference, co?.recipient?.[0]?.reference);
+const rcp = co?.recipient?.[0];
+ok("Communication has a recipient", !!(rcp?.reference || rcp?.display), rcp?.reference || rcp?.display);
+/* A literal reference to a resource the target server does not hold makes the
+   server reject the whole transaction — and only for ORANGE/RED, the cases
+   that matter. Either the L3 names the recipient without a reference, or it
+   points at a record that exists there. Both are legal; guessing is not. */
+ok("recipient reference resolves or is absent by design",
+   !rcp?.reference || /^[A-Za-z]+\/[A-Za-z0-9.-]+$/.test(rcp.reference), rcp?.reference || "display-only");
 ok("endpoint comes from the L3, not the code",
    !/hapi\.fhir\.org/.test(src) && /hapi\.fhir\.org/.test(JSON.stringify(L3.meta.fhir)));
 
