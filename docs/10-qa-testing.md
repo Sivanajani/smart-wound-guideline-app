@@ -57,7 +57,7 @@ Severity
 ## 10.3 Defects Found
 
 > All findings originate from **desk-based testing**, a systematic review of the decision table against the L3, and a multi-day simulation of the rules.
-> **Seven of the eleven defects arose in the L2 and only became apparent once the rules were executed — exactly the “L2–L4 translation issues" that the assignment asks about.** The last two, [B-09](#b-09--r12-escalated-two-unrelated-minor-findings) and [B-10](#b-10--r12-re-fired-every-second-day-indefinitely), needed more than execution: they only appear when several days are evaluated **in sequence**.
+> **Seven of the twelve defects arose in the L2 and only became apparent once the rules were executed — exactly the “L2–L4 translation issues" that the assignment asks about.** The last two, [B-09](#b-09--r12-escalated-two-unrelated-minor-findings) and [B-10](#b-10--r12-re-fired-every-second-day-indefinitely), needed more than execution: they only appear when several days are evaluated **in sequence**.
 
 ### B-01 · Marked signs of inflammation on days 1–2 are classified as GREEN
 
@@ -196,6 +196,19 @@ Severity
 | **Fix** | `meta.fhir.alert_recipient` is now a `Reference` **object** used verbatim, rather than a string that the app wrapped in `reference`. For the prototype it carries only a `display`, which is valid R4 and asserts nothing about the receiving server. A hospital deployment replaces it with `{"reference": "Organization/<id>", "display": "…"}` pointing at the practice record that exists there — a configuration change, not a code change |
 | **Retest** | F18, F21 · verified against the live endpoint: `HTTP 200`, all three resources created including the `Communication` |
 | **Lesson learned** | Conformance checking is not the same as interoperability. A bundle can satisfy every structural rule and still be rejected by the server it is addressed to — the only test that proves an interface works is sending it somewhere real |
+
+### B-12 · Hiding an element had no effect where the app styled it
+
+| | |
+|---|---|
+| **Severity** | 🟡 medium (usability — the interface contradicted its own flow) |
+| **Originating layer** | **L4** — presentation |
+| **Found by** | First hands-on use of the step flow, by a team member rather than by any automated check |
+| **Description** | The step navigation and the action bar (*evaluate · send to record · download bundle · new day*) were shown at all times. During the step flow the patient saw a blank blue button — *Next*, which is only given its label inside the step branch — and was offered *Send to patient record* on question 1, before anything had been evaluated |
+| **Root Cause** | Both elements are shown and hidden through the `hidden` attribute, but `[hidden] { display: none }` comes from the **browser** stylesheet, and both carried an author rule setting `display: flex`. Author rules win, so the attribute did nothing. The JavaScript was correct throughout — it set `hidden` exactly when it should |
+| **Fix** | One global rule, `[hidden] { display: none !important }`, which settles the whole class of bug rather than the two instances of it. Additionally the *Evaluate* button is hidden on the result screen, where the form it would re-read is no longer displayed |
+| **Retest** | Cross-check of every element toggled via `hidden` against the stylesheet: exactly two carried a competing `display` rule, both now neutralised |
+| **Lesson learned** | Our checks read the L3, the rules and the bundle — nothing looked at the rendered interface. A logic test suite cannot see a button that is on screen when it should not be. Usability testing was already listed as *not yet carried out*; this is the first defect to come out of that gap, and it took thirty seconds of real use to find |
 
 ## 10.4 Test Protocol
 
@@ -336,7 +349,7 @@ Day 5 names six characteristics. Where we stand:
 | Characteristic | Status |
 |---|---|
 | Documented risk analysis identifying highest-harm scenarios | ✅ Hazard table H-01…H-06 |
-| Evidence of testing on critical clinical paths | ✅ 21 of 21 test cases executed and passed; 11 defects found and fixed |
+| Evidence of testing on critical clinical paths | ✅ 21 of 21 test cases executed and passed; 12 defects found and fixed |
 | Clinical expert sign-off on rule logic and edge cases | ❌ **missing — documented as a limitation** |
 | Usability evidence that users can act correctly | ❌ **missing — greatest residual risk** |
 | Post-deployment monitoring plan with incident response | ✅ [11 M&E](11-implementation-monitoring-evaluation.md) |

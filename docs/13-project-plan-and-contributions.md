@@ -17,7 +17,7 @@
 | L2 — L1→L2 challenges | [07](07-l2-l1-to-l2-challenges.md) | ✅ 9 documented |
 | L3 — machine-readable code | [08](08-l3-architecture.md) + `l3/` | ✅ v0.3.4, bilingual, FHIR configured, graphics embedded |
 | L4 — executable layer | [09](09-l4-implementation-ux.md) + `l4/` | ✅ single file, no build step, bilingual |
-| QA — risk-based testing | [10](10-qa-testing.md) | ✅ 21/21 logic · 21/21 FHIR · no-hardcoding check · 11 defects fixed |
+| QA — risk-based testing | [10](10-qa-testing.md) | ✅ 21/21 logic · 21/21 FHIR · no-hardcoding check · 12 defects fixed |
 | Implementation, M&E strategy | [11](11-implementation-monitoring-evaluation.md) | ✅ |
 | Expected impact | [12](12-impact-and-regulation.md) | ✅ incl. SaMD classification |
 | Presentation | `submission/` | ✅ 16 slides + 10 backup slides, with speaker notes |
