@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_7bOP8GybED-z3onHqywOug" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:itemDefinition id="_t_stamm_SkippableInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_PriorityInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_CommentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_DescriptionInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_CreatedByInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_TaskNameInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_GroupIdInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_ContentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_NotStartedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_NotCompletedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_NotStartedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_stamm_NotCompletedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_SkippableInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_PriorityInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_CommentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_DescriptionInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_CreatedByInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_TaskNameInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_GroupIdInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_ContentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_NotStartedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_NotCompletedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_NotStartedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_daily_NotCompletedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_SkippableInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_PriorityInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_CommentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_DescriptionInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_CreatedByInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_TaskNameInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_GroupIdInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_ContentInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_NotStartedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_NotCompletedReassignInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_NotStartedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_fix_NotCompletedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="_t_rules_namespaceInputXItem" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="_t_rules_modelInputXItem" structureRef="java.lang.String"/>
+  <bpmn2:itemDefinition id="_t_rules_decisionInputXItem" structureRef="java.lang.String"/>
+  <bpmn2:collaboration id="_CB18475E-1A40-43F5-B413-3B2CB98EC0D6" name="Default Collaboration">
+    <bpmn2:participant id="_3AC2018C-FE95-4381-AE26-EE25129857F8" name="WundCheck app (CDSS)" processRef="_09_BPMN_App_Detailprozess"/>
+  </bpmn2:collaboration>
+  <bpmn2:process id="_09_BPMN_App_Detailprozess" drools:packageName="com.example" drools:version="1.0" drools:adHoc="false" name="workflow-app-detail" processType="Public">
+    <bpmn2:laneSet>
+      <bpmn2:lane id="lane_pat" name="Patient">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Patient:in]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:flowNodeRef>start</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>gw_first</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_daily</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_fix</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="lane_app" name="WundCheck app (CDSS)">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[WundCheck-App (CDSS)]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:flowNodeRef>t_val</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>gw_valid</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_rules</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>gw_red</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>gw_or</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>gw_ye</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_red</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_or</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_ye</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_gr</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_info</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>t_fhir</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>end</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:sequenceFlow id="f22" sourceRef="t_fhir" targetRef="end"/>
+    <bpmn2:sequenceFlow id="f21" sourceRef="t_info" targetRef="t_fhir"/>
+    <bpmn2:sequenceFlow id="f20" sourceRef="t_gr" targetRef="t_info"/>
+    <bpmn2:sequenceFlow id="f19" sourceRef="t_ye" targetRef="t_info"/>
+    <bpmn2:sequenceFlow id="f18" sourceRef="t_or" targetRef="t_info"/>
+    <bpmn2:sequenceFlow id="f17" sourceRef="t_red" targetRef="t_info"/>
+    <bpmn2:sequenceFlow id="f15" name="yes" sourceRef="gw_ye" targetRef="t_ye">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ja]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f16" name="no" sourceRef="gw_ye" targetRef="t_gr">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[nein]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f13" name="yes" sourceRef="gw_or" targetRef="t_or">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ja]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f14" name="no" sourceRef="gw_or" targetRef="gw_ye">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[nein]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f11" name="yes" sourceRef="gw_red" targetRef="t_red">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ja]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f12" name="no" sourceRef="gw_red" targetRef="gw_or">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[nein]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f10" sourceRef="t_rules" targetRef="gw_red"/>
+    <bpmn2:sequenceFlow id="f9" name="yes" sourceRef="gw_valid" targetRef="t_rules">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ja]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f6" sourceRef="t_val" targetRef="gw_valid"/>
+    <bpmn2:sequenceFlow id="f7" name="no" sourceRef="gw_valid" targetRef="t_fix">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[nein]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f5" sourceRef="t_daily" targetRef="t_val"/>
+    <bpmn2:sequenceFlow id="f3" name="no" sourceRef="gw_first" targetRef="t_daily">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[nein]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="f1" sourceRef="start" targetRef="gw_first"/>
+    <bpmn2:sequenceFlow id="_7089ADAB-32D5-4B02-8224-4F47F1E0C142" sourceRef="t_stamm" targetRef="t_val"/>
+    <bpmn2:sequenceFlow id="f4" sourceRef="t_stamm" targetRef="t_daily"/>
+    <bpmn2:sequenceFlow id="f8" sourceRef="t_fix" targetRef="t_stamm"/>
+    <bpmn2:sequenceFlow id="f2" name="yes" sourceRef="gw_first" targetRef="t_stamm">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ja]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="end" name="Check saved">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Kontrolle gespeichert]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f22</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:serviceTask id="t_fhir" name="Generate FHIR bundle &amp; transmit to record (QResponse + Observation)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[FHIR-Bundle erzeugen & in Akte übermitteln (QResponse + Observation)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f21</bpmn2:incoming>
+      <bpmn2:outgoing>f22</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="t_info" name="Add notes (I1–I5, non-exclusive)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Hinweise ergänzen (I1–I4, nicht-exklusiv)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f17</bpmn2:incoming>
+      <bpmn2:incoming>f18</bpmn2:incoming>
+      <bpmn2:incoming>f19</bpmn2:incoming>
+      <bpmn2:incoming>f20</bpmn2:incoming>
+      <bpmn2:outgoing>f21</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="t_gr" name="Show GREEN (R8, catch-all)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[GRÜN anzeigen (R8, Catch-all)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f16</bpmn2:incoming>
+      <bpmn2:outgoing>f20</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="t_ye" name="Show YELLOW (monitor)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[GELB anzeigen (beobachten)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f15</bpmn2:incoming>
+      <bpmn2:outgoing>f19</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="t_or" name="Show ORANGE + alert to practice">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ORANGE anzeigen + Alert an Praxis]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f13</bpmn2:incoming>
+      <bpmn2:outgoing>f18</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="t_red" name="Show RED + alert to practice">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[ROT anzeigen + Alert an Praxis]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f11</bpmn2:incoming>
+      <bpmn2:outgoing>f17</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:exclusiveGateway id="gw_ye" name="Abnormal? (R6a–R7, R10)" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Auffällig? (R6–R7)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f14</bpmn2:incoming>
+      <bpmn2:outgoing>f16</bpmn2:outgoing>
+      <bpmn2:outgoing>f15</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="gw_or" name="Suspected infection? (R9, R4–R5, R11–R12)" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Infektions- verdacht? (R4–R5)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f12</bpmn2:incoming>
+      <bpmn2:outgoing>f14</bpmn2:outgoing>
+      <bpmn2:outgoing>f13</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="gw_red" name="Emergency? (R1–R3)" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Notfall? (R1–R3)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f10</bpmn2:incoming>
+      <bpmn2:outgoing>f12</bpmn2:outgoing>
+      <bpmn2:outgoing>f11</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:businessRuleTask id="t_rules" drools:ruleFlowGroup="" name="Evaluate decision table from L3 (worst-first)" implementation="http://www.jboss.org/drools/rule">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Decision Table aus L3 auswerten (worst-first)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f9</bpmn2:incoming>
+      <bpmn2:outgoing>f10</bpmn2:outgoing>
+    </bpmn2:businessRuleTask>
+    <bpmn2:exclusiveGateway id="gw_valid" name="Valid &amp; complete?" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Gültig & vollständig?]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f6</bpmn2:incoming>
+      <bpmn2:outgoing>f7</bpmn2:outgoing>
+      <bpmn2:outgoing>f9</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:serviceTask id="t_val" name="Validate: constraints, mandatory fields; compute derived values">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Validieren: Constraints, Pflichtfelder; abgeleitete Werte berechnen]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_7089ADAB-32D5-4B02-8224-4F47F1E0C142</bpmn2:incoming>
+      <bpmn2:incoming>f5</bpmn2:incoming>
+      <bpmn2:outgoing>f6</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:userTask id="t_fix" name="Correct inputs">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Eingaben korrigieren]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f7</bpmn2:incoming>
+      <bpmn2:outgoing>f8</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="t_fix_TaskNameInputX" drools:dtype="Object" itemSubjectRef="_t_fix_TaskNameInputXItem" name="TaskName"/>
+        <bpmn2:dataInput id="t_fix_SkippableInputX" drools:dtype="Object" itemSubjectRef="_t_fix_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>t_fix_TaskNameInputX</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>t_fix_SkippableInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_fix_TaskNameInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[Task]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_fix_TaskNameInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_fix_SkippableInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[false]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_fix_SkippableInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="t_daily" name="Complete daily check (values + tap images)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Tageskontrolle ausfüllen (Werte + Bilder anklicken)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f4</bpmn2:incoming>
+      <bpmn2:incoming>f3</bpmn2:incoming>
+      <bpmn2:outgoing>f5</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="t_daily_TaskNameInputX" drools:dtype="Object" itemSubjectRef="_t_daily_TaskNameInputXItem" name="TaskName"/>
+        <bpmn2:dataInput id="t_daily_SkippableInputX" drools:dtype="Object" itemSubjectRef="_t_daily_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>t_daily_TaskNameInputX</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>t_daily_SkippableInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_daily_TaskNameInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[Task]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_daily_TaskNameInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_daily_SkippableInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[false]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_daily_SkippableInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="gw_first" name="First use?" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Erste Nutzung?]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f1</bpmn2:incoming>
+      <bpmn2:outgoing>f2</bpmn2:outgoing>
+      <bpmn2:outgoing>f3</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:startEvent id="start" name="Open app">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[App öffnen]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>f1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="t_stamm" name="Capture baseline data &amp; risk factors (once)">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Stammdaten & Risiko- faktoren erfassen (1×)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>f2</bpmn2:incoming>
+      <bpmn2:incoming>f8</bpmn2:incoming>
+      <bpmn2:outgoing>f4</bpmn2:outgoing>
+      <bpmn2:outgoing>_7089ADAB-32D5-4B02-8224-4F47F1E0C142</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="t_stamm_TaskNameInputX" drools:dtype="Object" itemSubjectRef="_t_stamm_TaskNameInputXItem" name="TaskName"/>
+        <bpmn2:dataInput id="t_stamm_SkippableInputX" drools:dtype="Object" itemSubjectRef="_t_stamm_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>t_stamm_TaskNameInputX</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>t_stamm_SkippableInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_stamm_TaskNameInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[Task]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_stamm_TaskNameInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:targetRef>t_stamm_SkippableInputX</bpmn2:targetRef>
+        <bpmn2:assignment>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression"><![CDATA[false]]></bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[t_stamm_SkippableInputX]]></bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:userTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="_09_BPMN_App_Detailprozess">
+      <bpmndi:BPMNShape id="shape_t_stamm" bpmnElement="t_stamm">
+        <dc:Bounds height="56" width="150" x="329" y="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_start" bpmnElement="start">
+        <dc:Bounds height="56" width="56" x="102" y="91"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gw_first" bpmnElement="gw_first">
+        <dc:Bounds height="56" width="56" x="216" y="91"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_daily" bpmnElement="t_daily">
+        <dc:Bounds height="62" width="150" x="329" y="134"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_fix" bpmnElement="t_fix">
+        <dc:Bounds height="56" width="140" x="650" y="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_val" bpmnElement="t_val">
+        <dc:Bounds height="70" width="170" x="470" y="255"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gw_valid" bpmnElement="gw_valid">
+        <dc:Bounds height="56" width="56" x="690" y="268"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_rules" bpmnElement="t_rules">
+        <dc:Bounds height="62" width="160" x="790" y="259"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gw_red" bpmnElement="gw_red">
+        <dc:Bounds height="56" width="56" x="970" y="268"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gw_or" bpmnElement="gw_or">
+        <dc:Bounds height="56" width="56" x="1100" y="268"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gw_ye" bpmnElement="gw_ye">
+        <dc:Bounds height="56" width="56" x="1230" y="268"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_red" bpmnElement="t_red">
+        <dc:Bounds height="56" width="130" x="920" y="390"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_or" bpmnElement="t_or">
+        <dc:Bounds height="56" width="130" x="1060" y="390"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_ye" bpmnElement="t_ye">
+        <dc:Bounds height="56" width="130" x="1200" y="390"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_gr" bpmnElement="t_gr">
+        <dc:Bounds height="56" width="130" x="1340" y="390"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_info" bpmnElement="t_info">
+        <dc:Bounds height="56" width="170" x="1060" y="500"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_t_fhir" bpmnElement="t_fhir">
+        <dc:Bounds height="62" width="170" x="1060" y="585"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_end" bpmnElement="end">
+        <dc:Bounds height="56" width="56" x="1300" y="598"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_lane_pat" bpmnElement="lane_pat">
+        <dc:Bounds height="170" width="1406" x="74" y="40"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_lane_app" bpmnElement="lane_app">
+        <dc:Bounds height="460" width="1406" x="74" y="210"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge_shape_gw_first_to_shape_t_stamm" bpmnElement="f2">
+        <di:waypoint x="238" y="91"/>
+        <di:waypoint x="244" y="66"/>
+        <di:waypoint x="329" y="64"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_fix_to_shape_t_stamm" bpmnElement="f8">
+        <di:waypoint x="650" y="78"/>
+        <di:waypoint x="404" y="64"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_stamm_to_shape_t_daily" bpmnElement="f4">
+        <di:waypoint x="479" y="64"/>
+        <di:waypoint x="545" y="78"/>
+        <di:waypoint x="404" y="134"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_stamm_to_shape_t_val" bpmnElement="_7089ADAB-32D5-4B02-8224-4F47F1E0C142">
+        <di:waypoint x="404" y="64"/>
+        <di:waypoint x="450" y="290"/>
+        <di:waypoint x="470" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_start_to_shape_gw_first" bpmnElement="f1">
+        <di:waypoint x="138" y="109"/>
+        <di:waypoint x="216" y="113"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_first_to_shape_t_daily" bpmnElement="f3">
+        <di:waypoint x="260" y="113"/>
+        <di:waypoint x="291" y="132"/>
+        <di:waypoint x="329" y="165"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_daily_to_shape_t_val" bpmnElement="f5">
+        <di:waypoint x="404" y="196"/>
+        <di:waypoint x="545" y="243"/>
+        <di:waypoint x="555" y="243"/>
+        <di:waypoint x="555" y="255"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_valid_to_shape_t_fix" bpmnElement="f7">
+        <di:waypoint x="712" y="268"/>
+        <di:waypoint x="712" y="120"/>
+        <di:waypoint x="720" y="120"/>
+        <di:waypoint x="720" y="106"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_val_to_shape_gw_valid" bpmnElement="f6">
+        <di:waypoint x="640" y="290"/>
+        <di:waypoint x="690" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_valid_to_shape_t_rules" bpmnElement="f9">
+        <di:waypoint x="734" y="290"/>
+        <di:waypoint x="790" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_rules_to_shape_gw_red" bpmnElement="f10">
+        <di:waypoint x="950" y="290"/>
+        <di:waypoint x="970" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_red_to_shape_gw_or" bpmnElement="f12">
+        <di:waypoint x="1014" y="290"/>
+        <di:waypoint x="1100" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_red_to_shape_t_red" bpmnElement="f11">
+        <di:waypoint x="992" y="312"/>
+        <di:waypoint x="992" y="390"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_or_to_shape_gw_ye" bpmnElement="f14">
+        <di:waypoint x="1144" y="290"/>
+        <di:waypoint x="1230" y="290"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_or_to_shape_t_or" bpmnElement="f13">
+        <di:waypoint x="1122" y="312"/>
+        <di:waypoint x="1122" y="390"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_ye_to_shape_t_gr" bpmnElement="f16">
+        <di:waypoint x="1274" y="290"/>
+        <di:waypoint x="1405" y="290"/>
+        <di:waypoint x="1405" y="390"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_gw_ye_to_shape_t_ye" bpmnElement="f15">
+        <di:waypoint x="1252" y="312"/>
+        <di:waypoint x="1252" y="390"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_red_to_shape_t_info" bpmnElement="f17">
+        <di:waypoint x="985" y="446"/>
+        <di:waypoint x="985" y="516"/>
+        <di:waypoint x="1115" y="516"/>
+        <di:waypoint x="1115" y="500"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_or_to_shape_t_info" bpmnElement="f18">
+        <di:waypoint x="1125" y="446"/>
+        <di:waypoint x="1125" y="486"/>
+        <di:waypoint x="1135" y="486"/>
+        <di:waypoint x="1135" y="500"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_ye_to_shape_t_info" bpmnElement="f19">
+        <di:waypoint x="1265" y="446"/>
+        <di:waypoint x="1265" y="486"/>
+        <di:waypoint x="1155" y="486"/>
+        <di:waypoint x="1155" y="500"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_gr_to_shape_t_info" bpmnElement="f20">
+        <di:waypoint x="1405" y="446"/>
+        <di:waypoint x="1405" y="486"/>
+        <di:waypoint x="1175" y="486"/>
+        <di:waypoint x="1175" y="500"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_info_to_shape_t_fhir" bpmnElement="f21">
+        <di:waypoint x="1145" y="556"/>
+        <di:waypoint x="1145" y="585"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_t_fhir_to_shape_end" bpmnElement="f22">
+        <di:waypoint x="1230" y="616"/>
+        <di:waypoint x="1300" y="616"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmn2:relationship type="BPSimData">
+    <bpmn2:extensionElements>
+      <bpsim:BPSimData>
+        <bpsim:Scenario id="default" name="Simulationscenario">
+          <bpsim:ScenarioParameters/>
+          <bpsim:ElementParameters elementRef="t_stamm">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="start">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_daily">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_fix">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_val">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_rules">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_red">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_or">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_ye">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_gr">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_info">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="t_fhir">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+        </bpsim:Scenario>
+      </bpsim:BPSimData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_7bOP8GybED-z3onHqywOug</bpmn2:source>
+    <bpmn2:target>_7bOP8GybED-z3onHqywOug</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>
