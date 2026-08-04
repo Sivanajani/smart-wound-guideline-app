@@ -93,8 +93,11 @@
 | DE-047 | `last_classification` | Yesterday's classification | **calculated** | `previous(classification)` | — | `Observation` (previous day) | — |
 | DE-048 | `trend_worsening` | Deterioration compared with yesterday | **calculated** | `severity(classification) > severity(last_classification)` | — | `Observation.interpretation` | **CDC** (“new or worsening") |
 | DE-049 | `check_streak_days` | Consecutive days with a completed check | **calculated** | `countConsecutiveDays()` | — | — | Fidelity indicator ([M&E](11-implementation-monitoring-evaluation.md)) |
+| DE-050 | `last_rule` | Yesterday's triggering rule | **calculated** | `previousRule()` — the rule that **opened** yesterday's evaluation, before any escalation | — | `Observation` (previous day) | Persistence criterion ([B-09](10-qa-testing.md), [B-10](10-qa-testing.md)) |
 
 > *Note: `check_streak_days` (DE-049) is a purely monitoring-related indicator without any effect on the clinical rules. If it is not counted among the clinical data elements, the total is 48.*
+>
+> *`last_rule` (DE-050) exists because [R12](06-l2-decision-logic.md) asks whether the **same** finding persists, not merely whether the colour repeats. It deliberately holds the first-pass rule: storing the winning rule would make R12 compare against its own escalation the next day — see [B-10](10-qa-testing.md).*
 
 ---
 

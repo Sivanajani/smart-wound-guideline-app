@@ -1,4 +1,4 @@
-# 09 · L4 — Executable Layer & UX
+﻿# 09 · L4 — Executable Layer & UX
 
 > **Assignment:** *“Implement the executable (end-user) layer (L4): Choose appropriate technology for implementation compatible with the L3 developed. Think about user interface considerations — what will make the system more or less acceptable and usable to end-users."*
 
@@ -126,7 +126,7 @@ Measured against the four levels from Lecture Day 4:
 |---|---|---|
 | **1 Foundational** | ✅ | Data exchange is technically possible — the app POSTs a bundle to a FHIR endpoint |
 | **2 Structural** | ✅ | FHIR R4 resources with a defined structure; typed answers; versioned canonical |
-| **3 Semantic** | ⚠️ **partial** | 38 of 48 elements carry a terminology binding. Full semantics would require complete mapping and a resolved SNOMED CT licensing position |
+| **3 Semantic** | ⚠️ **partial** | 38 of 49 elements carry a terminology binding. Full semantics would require complete mapping and a resolved SNOMED CT licensing position |
 | **4 Organisational** | ❌ | Governance, consent management, the legal framework and process integration are not addressed |
 
 The honest answer: **structurally yes, semantically partly, organisationally no.**
@@ -183,7 +183,7 @@ The regulatory consequence is covered in [12 Impact & Regulation](12-impact-and-
 
 ## 9.6 Open Points
 
-- [x] New elements and rules from [05](05-l2-data-dictionary.md)/[06](06-l2-decision-logic.md) implemented in the L3 and tested (19/19)
+- [x] New elements and rules from [05](05-l2-data-dictionary.md)/[06](06-l2-decision-logic.md) implemented in the L3 and tested (21/21)
 - [x] Outbound queue for pending FHIR transmissions implemented
 - [x] Application rebuilt without a framework — no build step, no dependencies
 - [ ] Wound graphics are schematic placeholders; they should be redrawn against the Southampton grades and for more than one skin tone

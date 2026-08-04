@@ -1,11 +1,16 @@
-# WundCheck — Mini-CDSS for daily wound checks after surgery
+﻿# WundCheck — Mini-CDSS for daily wound checks after surgery
 
 > **FHNW MSc Medical Informatics · Clinical Decision Support Systems Module 2026**
 
 > Group project: knowledge-based CDSS following the WHO SMART Guidelines layer approach (L1 → L2 → L3 → L4)
 
 **Repository:** https://github.com/Sivanajani/smart-wound-guideline-app  
-**Authors:** Feline Weger (Biomedical Engineer) · Sivanajani Sivakumar (MSc Medical Informatics)
+
+**DEMO:** https://sivanajani.github.io/smart-wound-guideline-app/l4/wundcheck-app.html
+
+**Authors:** Feline Weger · Sivanajani Sivakumar
+
+Group 5
 
 ---
 
@@ -72,8 +77,6 @@ The documents follow the structure of the assignment exactly:
 | 10 | [QA — Risk-based testing](docs/10-qa-testing.md) | Quality Assurance Testing |
 | 11 | [Implementation, Monitoring & Evaluation](docs/11-implementation-monitoring-evaluation.md) | Implementation, monitoring and evaluation strategy |
 | 12 | [Expected Impact & Regulation](docs/12-impact-and-regulation.md) | Describe expected impact |
-| 13 | [Project plan & contributions](docs/13-project-plan-and-contributions.md) | Individual contributions |
-| 14 | [Presentation script](docs/14-presentation-script.md) | Spoken script for all 26 slides, timings, speaker split, live-demo choreography, Q&A map |
 
 ---
 
@@ -99,7 +102,7 @@ The app is bilingual (EN/DE, English by default) and loads the embedded L3. Via 
 **Running the tests**
 
 ```bash
-node tools/run-tests.mjs     # 19 decision-logic test cases against l3/wundcheck-l3.json
+node tools/run-tests.mjs     # 21 decision-logic test cases against l3/wundcheck-l3.json
 node tools/check-fhir.mjs    # 20 FHIR R4 conformance checks on the generated bundle
 node tools/check-hardcoding.mjs  # proves the L4 contains no clinical content
 node tools/build-presentation.js # rebuilds the 26-slide deck incl. speaker notes and QR code

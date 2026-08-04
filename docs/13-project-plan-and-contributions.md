@@ -1,4 +1,4 @@
-# 13 · Project Plan, Presentation & Contributions
+﻿# 13 · Project Plan, Presentation & Contributions
 
 > **Assignment:** *“Include a final slide describing individual contributions."* · *“Duration: 10 minutes for presentation, 10 minutes for questions."*
 
@@ -12,12 +12,12 @@
 | User personas & scenarios | [02](02-personas-and-scenarios.md) | ✅ 3 personas · 2 required scenarios + 1 stress case |
 | Guidelines and evidence (L1) | [03](03-l1-guidelines-and-evidence.md) | ✅ 4 sources, appraised |
 | L2 — high-level workflow (BPMN) | [04](04-l2-workflow-bpmn.md) + `diagrams/` | ✅ 2 diagrams, typed tasks, English |
-| L2 — data dictionary | [05](05-l2-data-dictionary.md) | ✅ 48 elements |
+| L2 — data dictionary | [05](05-l2-data-dictionary.md) | ✅ 49 elements |
 | L2 — decision logic | [06](06-l2-decision-logic.md) | ✅ 18 rules |
 | L2 — L1→L2 challenges | [07](07-l2-l1-to-l2-challenges.md) | ✅ 9 documented |
 | L3 — machine-readable code | [08](08-l3-architecture.md) + `l3/` | ✅ v0.3.4, bilingual, FHIR configured, graphics embedded |
 | L4 — executable layer | [09](09-l4-implementation-ux.md) + `l4/` | ✅ single file, no build step, bilingual |
-| QA — risk-based testing | [10](10-qa-testing.md) | ✅ 19/19 logic · 20/20 FHIR · no-hardcoding check · 8 defects fixed |
+| QA — risk-based testing | [10](10-qa-testing.md) | ✅ 21/21 logic · 20/20 FHIR · no-hardcoding check · 10 defects fixed |
 | Implementation, M&E strategy | [11](11-implementation-monitoring-evaluation.md) | ✅ |
 | Expected impact | [12](12-impact-and-regulation.md) | ✅ incl. SaMD classification |
 | Presentation | `submission/` | ✅ 16 slides + 10 backup slides, with speaker notes |
@@ -53,7 +53,7 @@ Full spoken text for every slide, including the backups: **[14 · Presentation s
 | 4 | L1 & evidence appraisal | Feline | We discarded the statistically better instrument — it cannot be captured by laypersons | 0:42 |
 | 5 | **Southampton mapping** | Feline | Our choice of images is a published grading, not a UI whim | 0:42 |
 | 6 | BPMN high-level | Feline | Four lanes, one business rule task — the logic is not in the app | 0:30 |
-| 7 | Data dictionary | Feline | 48 elements · 9 derived · 38 with terminology · 47 FHIR-mapped | 0:25 |
+| 7 | Data dictionary | Feline | 49 elements · 10 derived · 38 with terminology · 48 FHIR-mapped | 0:25 |
 | 8 | Decision table & worst-first | Feline | False reassurance weighs more than a false alarm | 0:38 |
 | 9 | **L1→L2 challenges** | Feline | Nine places where the guideline left us on our own | 0:38 |
 | 10 | L3 architecture decision | Sivanajani | Author custom JSON, speak standards at the interface — and *prove* the app holds no clinical content | 0:30 |
@@ -74,7 +74,7 @@ Each has its own 20–30 s script in [14 §14.3](14-presentation-script.md); jum
 
 ### The key figures line for slide 7
 
-> **48 data elements · 9 derived · 38 with terminology binding · 47 with FHIR mapping · 18 decision rules · 9 documented L1→L2 challenges · 6 hazards · 39 automated checks (19 decision logic + 20 FHIR conformance) plus a machine-enforced no-hardcoding check, all passing · 8 defects found and fixed**
+> **49 data elements · 10 derived · 38 with terminology binding · 48 with FHIR mapping · 18 decision rules · 9 documented L1→L2 challenges · 6 hazards · 39 automated checks (19 decision logic + 20 FHIR conformance) plus a machine-enforced no-hardcoding check, all passing · 8 defects found and fixed**
 
 ---
 

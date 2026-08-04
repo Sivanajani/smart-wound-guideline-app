@@ -55,7 +55,7 @@ I1 … I5                    ℹ️ additional, non-exclusive
 | **R4** | `secretion = 3` **OR** `secretion_smell = 1` | **SUSPECTED INFECTION** — Purulent or foul-smelling discharge: contact your practice today for an appointment. | Purulent discharge is a **main criterion** of superficial incisional SSI (“purulent drainage from the superficial incision") | **CDC** superficial incisional SSI · Southampton IV |
 | **R5** | `fever = true` **OR** (`pain >= 7` **AND** `pain_trend = 2` **AND** `days_post_op >= 3`) | **SUSPECTED INFECTION** — Fever or increasing severe pain: contact your practice today. | Pain should be decreasing from day 3 onwards. An increase is a warning sign — the CDC explicitly names *“new or worsening localized pain"* | **CDC** · NICE NG125 |
 | **R11** | `secretion >= 1` **AND** `discharge_duration_days >= 3` | **SUSPECTED INFECTION** — Persistent wound discharge for several days: contact your practice today. | Southampton lists “prolonged discharge > 3 days" as a separate sub-grade (IIId) — persistent discharge requires treatment even in the absence of pus | **Southampton IIId** |
-| **R12** | `classification = 'yellow'` **AND** `last_classification = 'yellow'` | **SUSPECTED INFECTION** — Second abnormal day in a row: contact your practice today. | A single abnormal day is tolerable, a persisting abnormal finding is not. Originally specified as "deterioration vs. yesterday" and therefore unreachable — see [B-08](10-qa-testing.md). Requires two-pass evaluation ([B-07](10-qa-testing.md)) | CDC/NHSN — new or worsening · persistence criterion |
+| **R12** | `classification = 'yellow'` **AND** `severityRank(last_classification) >= 1` **AND** `current_rule = last_rule` | **SUSPECTED INFECTION** — The same abnormal finding as yesterday: contact your practice today. | A single abnormal day is tolerable, **the same finding persisting** is not. Three corrections: unreachable as first specified ([B-08](10-qa-testing.md)), escalating on colour alone ([B-09](10-qa-testing.md)), and re-firing every second day ([B-10](10-qa-testing.md)). Requires two-pass evaluation ([B-07](10-qa-testing.md)) | CDC/NHSN — new or worsening · persistence criterion |
 
 ### 🟡 YELLOW — Abnormal
 
@@ -95,6 +95,21 @@ These rules fire **in addition** to the classification and may overlap with one 
 Rule R12 references `classification` — its own result. The rules are therefore evaluated **twice**: the first pass produces a provisional classification, which is fed back into the scope; the second pass may then fire R12. **The worse of the two results wins**, so a second pass can only escalate, never de-escalate — worst-first applies across passes as well.
 
 This mechanism was added after [bug B-07](10-qa-testing.md), in which R12 could never fire because of a circular dependency.
+
+### What a persistence rule has to compare
+
+A rule about persistence needs two things the other rules do not: *what* was found yesterday, and whether it is the **same** thing today. Two derived elements supply them, and both read from the check history rather than from the questionnaire:
+
+| Element | Value |
+|---|---|
+| `last_classification` (DE-047) | Yesterday's traffic light |
+| `last_rule` (DE-050) | **The rule that opened yesterday's evaluation** — the first-pass rule, before any escalation |
+
+`last_rule` deliberately stores the *first-pass* rule, not the rule that finally won the day. If it stored the winner, R12 would compare itself against its own output the following day, never see the finding underneath, and fall back to yellow — which is precisely [bug B-10](10-qa-testing.md).
+
+The condition `severityRank(last_classification) >= 1` ("yellow or worse yesterday") rather than `= 'yellow'` serves the same purpose: once R12 has escalated a course to orange, the following day still counts as a continuing abnormal course instead of resetting the count.
+
+> **This is a classification, not a notification.** R12 keeps a course in ORANGE for as long as the finding persists, which is clinically the honest answer — but it means an alert layer that notifies on every ORANGE day will notify daily. Notifying on *escalation* rather than on *state* is an open point, see [11 Implementation](11-implementation-monitoring-evaluation.md).
 
 ---
 

@@ -130,4 +130,23 @@ An M&E plan that measures only success is incomplete. The following indicators e
 
 ---
 
+## 11.10 Open Point — Notify on Escalation, Not on State
+
+The classification and the notification are two different decisions, and the prototype currently conflates them: a `Communication` is generated on **every** ORANGE or RED day. Since the fix to [B-10](10-qa-testing.md), a course correctly stays ORANGE for as long as the finding persists — which means the practice is notified again every day for a finding it has already been told about and has already acted on.
+
+For the pilot, the alert layer should fire on the **transition**, not on the state:
+
+| Situation | Classification shown to the patient | Notification to the practice |
+|---|---|---|
+| GREEN → ORANGE | ORANGE | ✅ send |
+| ORANGE → ORANGE (unchanged) | ORANGE | ❌ suppress |
+| ORANGE → RED | RED | ✅ send (escalation) |
+| RED → ORANGE (improving) | ORANGE | ❌ suppress |
+
+This is deliberately **not** a change to the decision logic. The patient must keep seeing the correct classification every single day; only the outbound notification is deduplicated. Implementing it means one condition in the bundle builder in [09 §9.4](09-l4-implementation-ux.md#94-fhir-interface) — comparing the current classification against `last_classification` — and it needs a defined re-notification interval (for example: repeat after 72 h even when unchanged, so a persisting problem cannot fall silent).
+
+The indicator **alert override rate** above is what would show whether this is working.
+
+---
+
 **Related documents:** [08 L3](08-l3-architecture.md) · [09 L4](09-l4-implementation-ux.md) · [10 QA](10-qa-testing.md) · [12 Impact](12-impact-and-regulation.md)

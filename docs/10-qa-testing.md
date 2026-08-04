@@ -1,4 +1,4 @@
-# 10 · Quality Assurance — Risk-Based Testing
+﻿# 10 · Quality Assurance — Risk-Based Testing
 
 > **Assignment:** *“Quality Assurance Testing: Design an approach to risk-based testing. Conduct tests to identify L2 – L4 translation issues. Address any bugs or issues identified during testing."*
 
@@ -31,7 +31,7 @@ We follow the four-step risk-based procedure from Day 5. The depth of testing is
 | **H-03** | The patient abandons the check, leaving a gap in the trend | Too many questions; excessive duration | 3 | 3 | **9** | Baseline data collected only once; conditional logic reduces the number of questions; ≤ 3 min | T6 |
 | **H-04** | False alarm during normal healing | Threshold set too low; time window not taken into account | 2 | 4 | **8** | Time-dependent rule R6a; information rules actively reassure | T5, T9, T14 |
 | **H-05** | An implausible input is processed | Constraint missing or applied too late | 3 | 2 | **6** | Constraints run before rule evaluation (validation loop in the BPMN) | T7 |
-| **H-06** | The practice overlooks an alert | Alert fatigue caused by too many notifications | 4 | 2 | **8** | Alerts only for ORANGE/RED; structured content instead of free text | *(organisational, not testable)* |
+| **H-06** | The practice overlooks an alert | Alert fatigue caused by too many notifications | 4 | 2 | **8** | Alerts only for ORANGE/RED; structured content instead of free text; no repeat escalation for an unchanged finding | T20, T21 |
 
 ### Risk Matrix
 
@@ -56,8 +56,8 @@ Severity
 
 ## 10.3 Defects Found
 
-> All findings originate from **desk-based testing** and a systematic review of the decision table against the L3.
-> **Three of the five defects arose in the L2 and only became apparent during L4 testing — exactly the “L2–L4 translation issues" that the assignment asks about.**
+> All findings originate from **desk-based testing**, a systematic review of the decision table against the L3, and a multi-day simulation of the rules.
+> **Seven of the ten defects arose in the L2 and only became apparent once the rules were executed — exactly the “L2–L4 translation issues" that the assignment asks about.** The last two, [B-09](#b-09--r12-escalated-two-unrelated-minor-findings) and [B-10](#b-10--r12-re-fired-every-second-day-indefinitely), needed more than execution: they only appear when several days are evaluated **in sequence**.
 
 ### B-01 · Marked signs of inflammation on days 1–2 are classified as GREEN
 
@@ -157,9 +157,36 @@ Severity
 | **Retest** | T17 |
 | **Lesson learned** | Every new rule must be checked for reachability against the cascade — added to the L3 review checklist |
 
+### B-09 · R12 escalated two unrelated minor findings
+
+| | |
+|---|---|
+| **Severity** | 🟠 high (false alarm to the practice) |
+| **Originating layer** | **L2** — decision table |
+| **Found by** | Multi-day simulation of the rules, after B-08 had been fixed |
+| **Description** | R12 compared only the **traffic-light colour** of the two days. A patient reporting numbness on day 1 (R7) and slight bleeding under anticoagulation on day 2 (R10) was told to contact the practice for a suspected infection — two unrelated, individually harmless findings, neither of which had persisted or worsened |
+| **Root Cause** | "Second abnormal day in a row" was translated literally as "yellow twice". The colour is an aggregate over eleven different findings; equality of the aggregate says nothing about equality of the cause |
+| **Fix** | R12 additionally requires `current_rule = last_rule` — the same triggering rule as yesterday. New derived element `last_rule` (DE-050) with the helper `previousRule()`; the check history now also records the **first-pass** rule of each day |
+| **Retest** | T20 |
+| **Lesson learned** | A rule about *persistence* must compare the finding, not the classification. Aggregated outputs are lossy inputs |
+
+### B-10 · R12 re-fired every second day, indefinitely
+
+| | |
+|---|---|
+| **Severity** | 🔴 high (alert fatigue — attacks hazard **H-06** directly) |
+| **Originating layer** | **L2** — decision table |
+| **Found by** | Multi-day simulation of the rules |
+| **Description** | R12 required yesterday to be **exactly** YELLOW. Once it had fired, the day was ORANGE, so the next day fell back to YELLOW, and the day after that R12 fired again. A patient with stable post-operative numbness produced the course `YELLOW · ORANGE · YELLOW · ORANGE …` and **four alerts to the practice in eight days**, for a finding that never changed |
+| **Root Cause** | The rule read its own output as its input for the following day. Neither the single-day test T17 nor a document review can expose this — only running a course of several days does |
+| **Fix** | `severityRank(last_classification) >= 1` ("yellow **or worse** yesterday") instead of `= 'yellow'`, and `last_rule` stores the **first-pass** rule rather than the winning one, so R12 still sees the finding underneath its own escalation. The course now escalates once and stays escalated |
+| **Retest** | T21 |
+| **Lesson learned** | Any rule that reads the previous day's result must be tested over a **course**, not a single day. Added to the L3 review checklist |
+| **Follow-up** | The classification is now correct, but the alert layer notifies on every ORANGE day, so a persistent finding produces a daily notification. Notifying on *escalation* instead of on *state* is an open point — see [11 Implementation](11-implementation-monitoring-evaluation.md) |
+
 ## 10.4 Test Protocol
 
-> **Executed on 3 August 2026** against `l3/wundcheck-l3.json` v0.3.3 using the harness [`tools/run-tests.mjs`](../tools/run-tests.mjs), which uses the same expression engine as the L4 app.
+> **Last executed on 4 August 2026** against `l3/wundcheck-l3.json` v0.3.6 using the harness [`tools/run-tests.mjs`](../tools/run-tests.mjs), which uses the same expression engine as the L4 app.
 > Reproduce with `node tools/run-tests.mjs`.
 
 | ID | Checks | Hazard | Expected | Observed | Status |
@@ -180,15 +207,25 @@ Severity
 | T14 | B-01 counter-check | H-04 | GREEN (R6a does not fire) | `GREEN (R8) · SG I` | ✅ passed |
 | T15 | Southampton derivation | H-02 | grade IV -> ORANGE (R4) — see B-06 | `ORANGE (R4) · SG IV` | ✅ passed |
 | T16 | B-05 fixed | — | YELLOW (R10) | `YELLOW (R10) · SG 0` | ✅ passed |
-| T17 | persistence rule R12 | H-01 | ORANGE (R12) after a yellow yesterday | `ORANGE (R12)` | ✅ passed |
+| T17 | persistence rule R12 | H-01 | ORANGE (R12) after the same finding yesterday | `ORANGE (R12)` | ✅ passed |
 | T18 | discharge duration R11 | H-01 | ORANGE (R11) | `ORANGE (R11) · SG III` | ✅ passed |
 | T19 | threshold maintainability | — | ORANGE after threshold change | `GREEN -> ORANGE (R5)` | ✅ passed |
+| T20 | B-09 fixed — R12 needs the same finding | H-06 | day 2 stays YELLOW, no escalation | `YELLOW(R7) YELLOW(R10) GREEN(R8) · 0 alerts` | ✅ passed |
+| T21 | B-10 fixed — R12 escalates once, then holds | H-06 | one escalation, no yellow/orange ping-pong | `YELLOW(R7) ORANGE(R12) ORANGE(R12) ORANGE(R12) ORANGE(R12) ORANGE(R12) · 5 alerts` | ✅ passed |
 
-**19 passed, 0 failed, 19 total**
+**21 passed, 0 failed, 21 total**
 
 Boundary values are covered from both sides: `temp` 38.9/39.0/39.1 · `days_post_op` 2/3/4 · `pain` 6/7 · `discharge_duration_days` 2/3.
 
 **The first run failed 3 of 19 test cases.** All three were genuine defects, not harness errors — they became bugs [B-06](#b-06--southampton-grade-iv-mapped-to-red-in-the-l1-table-but-to-orange-in-the-rules), [B-07](#b-07--trend-rule-r12-could-never-fire--circular-dependency) and [B-08](#b-08--r12-was-unreachable-as-originally-specified). Two of them (B-07, B-08) were invisible to a pure document review and only surfaced once the rules were actually executed — which is precisely the point of the exercise.
+
+### Course-based tests (T20, T21)
+
+T1–T19 each evaluate a **single** day. That is sufficient for every rule that reads only the current answers — and structurally blind to a rule that reads yesterday's result. R12 is the only such rule, and both defects hiding in it ([B-09](#b-09--r12-escalated-two-unrelated-minor-findings), [B-10](#b-10--r12-re-fired-every-second-day-indefinitely)) were invisible to T17, which supplies a hand-written history and then checks one day.
+
+T20 and T21 therefore run a **course**: several consecutive checks, each one feeding its result into the history exactly as the app's *New day* button does. T21 is the regression guard for the ping-pong — it fails if any day after the first escalation drops back to YELLOW.
+
+> **Lesson for the test strategy:** a test case must span at least as much time as the rule it tests. Stateful rules need course-based tests, and the test protocol now says so.
 
 **Boundary value tests** cover both sides: `temp` 38.9/39.0/39.1 · `days_post_op` 2/3/4 · `pain` 6/7 · `discharge_duration_days` 2/3.
 
@@ -286,7 +323,7 @@ Day 5 names six characteristics. Where we stand:
 | Characteristic | Status |
 |---|---|
 | Documented risk analysis identifying highest-harm scenarios | ✅ Hazard table H-01…H-06 |
-| Evidence of testing on critical clinical paths | ✅ 19 of 19 test cases executed and passed; 8 defects found and fixed |
+| Evidence of testing on critical clinical paths | ✅ 21 of 21 test cases executed and passed; 10 defects found and fixed |
 | Clinical expert sign-off on rule logic and edge cases | ❌ **missing — documented as a limitation** |
 | Usability evidence that users can act correctly | ❌ **missing — greatest residual risk** |
 | Post-deployment monitoring plan with incident response | ✅ [11 M&E](11-implementation-monitoring-evaluation.md) |
