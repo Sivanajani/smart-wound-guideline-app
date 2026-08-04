@@ -57,7 +57,7 @@ Severity
 ## 10.3 Defects Found
 
 > All findings originate from **desk-based testing**, a systematic review of the decision table against the L3, and a multi-day simulation of the rules.
-> **Seven of the ten defects arose in the L2 and only became apparent once the rules were executed — exactly the “L2–L4 translation issues" that the assignment asks about.** The last two, [B-09](#b-09--r12-escalated-two-unrelated-minor-findings) and [B-10](#b-10--r12-re-fired-every-second-day-indefinitely), needed more than execution: they only appear when several days are evaluated **in sequence**.
+> **Seven of the eleven defects arose in the L2 and only became apparent once the rules were executed — exactly the “L2–L4 translation issues" that the assignment asks about.** The last two, [B-09](#b-09--r12-escalated-two-unrelated-minor-findings) and [B-10](#b-10--r12-re-fired-every-second-day-indefinitely), needed more than execution: they only appear when several days are evaluated **in sequence**.
 
 ### B-01 · Marked signs of inflammation on days 1–2 are classified as GREEN
 
@@ -183,6 +183,19 @@ Severity
 | **Retest** | T21 |
 | **Lesson learned** | Any rule that reads the previous day's result must be tested over a **course**, not a single day. Added to the L3 review checklist |
 | **Follow-up** | The classification is now correct, but the alert layer notifies on every ORANGE day, so a persistent finding produces a daily notification. Notifying on *escalation* instead of on *state* is an open point — see [11 Implementation](11-implementation-monitoring-evaluation.md) |
+
+### B-11 · The FHIR transaction was rejected — but only for ORANGE and RED
+
+| | |
+|---|---|
+| **Severity** | 🟠 high (the alert never arrives — and only in the cases where it matters) |
+| **Originating layer** | **L3** — interface configuration |
+| **Found by** | Posting the generated bundle to the live HAPI test server, rather than only checking its shape |
+| **Description** | `Communication.recipient` was the literal reference `Organization/practice`. That resource does not exist on the target server, so the server refused the **entire transaction** with `HTTP 400 · HAPI-1094: Resource Organization/practice not found`. Since a `Communication` is only generated for ORANGE and RED, GREEN and YELLOW submissions went through normally — the interface looked healthy and failed silently in exactly the two cases that require an alert |
+| **Root Cause** | A literal reference is a promise that the target resource exists on the receiving server. We wrote one for a resource we never created. `tools/check-fhir.mjs` validated the **shape** of the bundle, which was correct throughout — no shape check can catch a broken promise about someone else's database |
+| **Fix** | `meta.fhir.alert_recipient` is now a `Reference` **object** used verbatim, rather than a string that the app wrapped in `reference`. For the prototype it carries only a `display`, which is valid R4 and asserts nothing about the receiving server. A hospital deployment replaces it with `{"reference": "Organization/<id>", "display": "…"}` pointing at the practice record that exists there — a configuration change, not a code change |
+| **Retest** | F18, F21 · verified against the live endpoint: `HTTP 200`, all three resources created including the `Communication` |
+| **Lesson learned** | Conformance checking is not the same as interoperability. A bundle can satisfy every structural rule and still be rejected by the server it is addressed to — the only test that proves an interface works is sending it somewhere real |
 
 ## 10.4 Test Protocol
 
@@ -323,7 +336,7 @@ Day 5 names six characteristics. Where we stand:
 | Characteristic | Status |
 |---|---|
 | Documented risk analysis identifying highest-harm scenarios | ✅ Hazard table H-01…H-06 |
-| Evidence of testing on critical clinical paths | ✅ 21 of 21 test cases executed and passed; 10 defects found and fixed |
+| Evidence of testing on critical clinical paths | ✅ 21 of 21 test cases executed and passed; 11 defects found and fixed |
 | Clinical expert sign-off on rule logic and edge cases | ❌ **missing — documented as a limitation** |
 | Usability evidence that users can act correctly | ❌ **missing — greatest residual risk** |
 | Post-deployment monitoring plan with incident response | ✅ [11 M&E](11-implementation-monitoring-evaluation.md) |

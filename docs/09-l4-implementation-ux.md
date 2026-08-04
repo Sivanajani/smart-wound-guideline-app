@@ -50,6 +50,7 @@ wundcheck-app.html          (single file, ~56 KB, no dependencies, no build step
 | Decision | Rationale | Persona |
 |---|---|---|
 | **Image selection instead of description** for wound appearance and discharge | Overcomes language and educational barriers; produces structured, comparable data instead of free text | Peter |
+| **A caption under every picture, and an info box on the questions that need one** | A picture without a caption is a guess dressed up as structured data. The caption states what the picture is meant to show; the info box says how to judge it — viewing distance, lighting, comparing with the other side of the body, and that redness reads brownish or purple on darker skin. Both live in the L3 (`help`, `options[].hint`), because *which* question needs explaining is a clinical decision. Collapsed by default, so it costs nothing to anyone who does not open it | Peter |
 | **One question per screen**, large touch targets — see [9.6](#96-one-question-per-screen) | Small screens, reading glasses, possibly impaired fine motor skills after surgery | Peter |
 | **Baseline data only on first use** (gateway “First use?" / “Erste Nutzung?") | Daily use must stay under 3 minutes (NFR-3), otherwise adherence collapses | Peter |
 | **Sequence follows patient logic**, not guideline structure | First “how am I feeling", then “what does the wound look like" — inspecting the wound requires opening the dressing and therefore comes last | Peter |
@@ -93,7 +94,7 @@ The interface is **not** a file download. The app builds an R4 **transaction bun
   "endpoint": "https://hapi.fhir.org/baseR4",      // point at the hospital server or the EPD gateway
   "questionnaire_canonical": "http://wundcheck.example/Questionnaire/wundcheck",
   "patient_reference": "Patient/example",
-  "alert_recipient": "Organization/practice",
+  "alert_recipient": { "display": "WundCheck demo practice" },   // see below
   "send_mode": "transaction"
 }
 ```
@@ -104,7 +105,9 @@ The interface is **not** a file download. The app builds an R4 **transaction bun
 
 **Alerts only from ORANGE upwards.** A `Communication` is generated only for ORANGE and RED. GREEN and YELLOW are written into the record but do not notify anyone — this is the alert-fatigue mitigation from [12](12-impact-and-regulation.md), implemented in code rather than merely promised in prose.
 
-**Conformance-tested.** [`tools/check-fhir.mjs`](../tools/check-fhir.mjs) extracts the bundle builder from the app and checks 20 R4 shape rules — see [10 §10.5](10-qa-testing.md). A sample bundle is in [`submission/example-fhir-bundle.json`](../submission/example-fhir-bundle.json).
+**Who the alert is addressed to is configuration, and it matters more than it looks.** `alert_recipient` is used verbatim as `Communication.recipient[0]`. It originally held the literal reference `Organization/practice` — and a literal reference is a *promise that this resource exists on the receiving server*. It did not exist on the test server, so the server rejected the **entire transaction**, and because a `Communication` is only built for ORANGE and RED, sending failed exactly in the two cases that matter and worked fine for GREEN ([B-11](10-qa-testing.md)). For the prototype the field therefore carries only a `display`, which is valid R4 and asserts nothing about anyone else's database. A hospital deployment sets `{"reference": "Organization/<id>", "display": "…"}` pointing at the practice record that exists there — again a configuration change, not a code change.
+
+**Conformance-tested, and actually sent.** [`tools/check-fhir.mjs`](../tools/check-fhir.mjs) extracts the bundle builder from the app and checks 21 R4 shape rules — see [10 §10.5](10-qa-testing.md). A sample bundle is in [`submission/example-fhir-bundle.json`](../submission/example-fhir-bundle.json). The shape checks alone were not enough: B-11 passed every one of them and was still refused by the server. The bundle is therefore also posted to the live endpoint, which returns `HTTP 200` and creates all three resources.
 
 ### Why no framework at all
 

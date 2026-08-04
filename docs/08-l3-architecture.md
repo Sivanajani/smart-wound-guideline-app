@@ -147,6 +147,8 @@ That is exactly what we do: **authoring in the simple format, translation into t
 | `relevant` | Visibility condition — controls the conditional logic |
 | `calculation` | Only for `type: calculated`; defines the derived element |
 | `constraint` | Plausibility check with an error message understandable by laypersons; runs **before** rule evaluation |
+| `help` | Optional guidance on how to judge this question — a string or a list of points, rendered collapsed. **Which questions need explaining is a clinical decision, so it lives here and not in the app** |
+| `options[].hint` | Optional caption under an answer option, saying what the picture is meant to show. Without it an image answer is a guess dressed up as structured data |
 | `terminology` | Code bindings (SNOMED CT / LOINC / ICD-10) |
 | `fhir` | Target resource and element for the export |
 | `l1_source` | Back-reference to the passage in the guideline |

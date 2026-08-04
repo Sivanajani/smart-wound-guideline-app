@@ -103,7 +103,7 @@ The app is bilingual (EN/DE, English by default) and loads the embedded L3. Via 
 
 ```bash
 node tools/run-tests.mjs     # 21 decision-logic test cases against l3/wundcheck-l3.json
-node tools/check-fhir.mjs    # 20 FHIR R4 conformance checks on the generated bundle
+node tools/check-fhir.mjs    # 21 FHIR R4 conformance checks on the generated bundle
 node tools/check-hardcoding.mjs  # proves the L4 contains no clinical content
 node tools/build-presentation.js # rebuilds the 26-slide deck incl. speaker notes and QR code
 python3 tools/qr_test.py         # validates the QR encoder (RS vector, BCH, round-trip)
