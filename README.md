@@ -139,3 +139,29 @@ B-xx    Bug             → Bug log         → fix → retest
 **Not covered:** chronic wounds, burns, secondarily healing and open wounds, children, contaminated emergency procedures.
 
 > ⚠️ **Study prototype.** Not for clinical use. WundCheck does not replace medical assessment — it triages and documents.
+
+---
+
+## Use of AI
+
+We used AI assistance in this project and declare it here in full. The tool used was **Claude (Anthropic)**, largely through **Claude Code** in the development environment.
+
+**Where AI was used**
+
+| Area | What it did |
+|---|---|
+| **Research and orientation** | Locating and summarising the guidelines and the comparative study, drafting the argument for the choice of instrument, sorting terminology and FHIR resource types |
+| **Presentation** | The generator [`tools/build-presentation.js`](tools/build-presentation.js) that builds the deck, the layout of the slides, and the drafts of the speaker notes |
+| **Documentation** | Drafting, restructuring and editing the documents in [`docs/`](docs/) — including the English wording, since neither author writes English as a first language |
+| **L3 and L4** | Implementing the machine-readable definition and the application, the rule and expression engine, the FHIR bundle builder, the access code, the step flow and the wound graphics |
+| **Quality assurance** | The test harnesses in [`tools/`](tools/), the multi-day rule simulation, and finding several of the defects in the bug log — B-09 to B-12 were found this way |
+
+**Where the decisions remained ours**
+
+The use case, the scope and its boundaries, the choice of the four traffic-light levels, the *worst-first* principle, the thresholds not taken from a guideline (`fever_red`, `normal_healing_days` — documented as group decisions in [07](docs/07-l2-l1-to-l2-challenges.md)), the decision to reject ASEPSIS in favour of an instrument laypersons can actually use, and the division of work between the two authors.
+
+**How we checked the output**
+
+Every guideline statement in [03](docs/03-l1-guidelines-and-evidence.md) was verified against the primary source, which is why each one carries a citation and a URL. The decision logic is covered by 21 automated test cases and the FHIR interface by 21 conformance checks, all reproducible with the commands above — AI-written code that is wrong fails these checks in the same way as anything else. Defects we found this way are documented in the bug log rather than quietly corrected.
+
+**Responsibility.** AI accelerated the work and improved the writing; it did not make the clinical decisions and does not carry them. The authors are responsible for the content of this submission, including any errors that remain in it.

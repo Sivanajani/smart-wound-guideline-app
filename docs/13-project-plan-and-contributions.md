@@ -58,7 +58,7 @@ Full spoken text for every slide, including the backups: **[14 · Presentation s
 | 9 | **L1→L2 challenges** | Feline | Nine places where the guideline left us on our own | 0:38 |
 | 10 | L3 architecture decision | Sivanajani | Author custom JSON, speak standards at the interface — and *prove* the app holds no clinical content | 0:30 |
 | 11 | **Live demo** | Sivanajani | Green · orange + FHIR · changing a threshold without a rebuild | 1:50 |
-| 12 | QA: hazards, 8 defects, residual risk | Sivanajani | Three defects were invisible to document review | 0:45 |
+| 12 | QA: hazards, 12 defects, residual risk | Sivanajani | Four defects were invisible to document review | 0:45 |
 | 13 | Implementation & M&E | Sivanajani | What we could not test, we monitor in deployment | 0:35 |
 | 14 | Impact & SaMD | Sivanajani | IMDRF Category II — with a rationale | 0:28 |
 | 15 | Individual contributions | Sivanajani | Testing was cross-assigned; neither signed off their own layer | 0:15 |
@@ -68,13 +68,13 @@ Full spoken text for every slide, including the backups: **[14 · Presentation s
 
 ### Backup slides 17–26 *(not presented — for the Q&A)*
 
-17 complete decision table · 18 test protocol T1–T19 · 19 hazard analysis and risk matrix · 20 BPMN detail process · 21 FHIR interface · 22 traceability L1 → FHIR · 23 the L3 in one screen · 24 data dictionary columns · 25 depth that did not fit into ten minutes · 26 sources
+17 complete decision table · 18 test protocol T1–T21 · 19 hazard analysis and risk matrix · 20 BPMN detail process · 21 FHIR interface · 22 traceability L1 → FHIR · 23 the L3 in one screen · 24 data dictionary columns · 25 depth that did not fit into ten minutes · 26 sources
 
 Each has its own 20–30 s script in [14 §14.3](14-presentation-script.md); jump targets per likely question are tabulated in [14 §14.4](14-presentation-script.md).
 
 ### The key figures line for slide 7
 
-> **49 data elements · 10 derived · 38 with terminology binding · 48 with FHIR mapping · 18 decision rules · 9 documented L1→L2 challenges · 6 hazards · 39 automated checks (19 decision logic + 20 FHIR conformance) plus a machine-enforced no-hardcoding check, all passing · 8 defects found and fixed**
+> **49 data elements · 10 derived · 38 with terminology binding · 48 with FHIR mapping · 18 decision rules · 9 documented L1→L2 challenges · 6 hazards · 42 automated checks (21 decision logic + 21 FHIR conformance) plus a machine-enforced no-hardcoding check, all passing · 12 defects found and fixed**
 
 ---
 
