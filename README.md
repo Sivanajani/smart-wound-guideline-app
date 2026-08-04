@@ -1,7 +1,11 @@
 # WundCheck — Mini-CDSS for daily wound checks after surgery
 
 > **FHNW MSc Medical Informatics · Clinical Decision Support Systems Module 2026**
+
 > Group project: knowledge-based CDSS following the WHO SMART Guidelines layer approach (L1 → L2 → L3 → L4)
+
+**Repository:** https://github.com/Sivanajani/smart-wound-guideline-app  
+**Authors:** Feline Weger (Biomedical Engineer) · Sivanajani Sivakumar (MSc Medical Informatics)
 
 ---
 
@@ -29,7 +33,7 @@ L2  Human-readable Algorithm      BPMN workflow · Data Dictionary · Decision T
       │                            ↓ translation into machine readability
 L3  Machine-readable Layer        wundcheck-l3.json (elements, rules, constraints)
       │                            ↓ generic execution
-L4  Executable Layer              React web app, renders the L3 dynamically
+L4  Executable Layer              single-file web app (vanilla JS), renders the L3 dynamically
 ```
 
 **The central design decision:** the app contains **no** clinical logic. Questions, visibility rules, calculations, thresholds and decision rules reside entirely in the L3 JSON. A change to a guideline is a change to *one file* — no rebuild, no developer.
@@ -42,10 +46,10 @@ L4  Executable Layer              React web app, renders the L3 dynamically
 |---|---|
 | **[`docs/`](docs/)** | The complete project documentation — one document per assignment item |
 | **[`l3/`](l3/)** | Machine-readable CDSS definition (JSON) + schema documentation |
-| **[`l4/`](l4/)** | Executable app (self-contained HTML) + React source code |
+| **[`l4/`](l4/)** | Executable app — one self-contained HTML file, no build step, no dependencies |
 | **[`diagrams/`](diagrams/)** | BPMN diagrams (`.bpmn` editable, `.svg`/`.png` for embedding) |
 | **[`assets/`](assets/)** | Wound and discharge graphics for the image selection |
-| **[`submission/`](submission/)** | Submission package: slides, demo video, generated Excel/PDF exports |
+| **[`submission/`](submission/)** | Submission package: slides, demo recording, every document as PDF, L3 + L4 |
 | `_archive/` | Earlier file versions from before the restructuring |
 
 ---
@@ -69,7 +73,7 @@ The documents follow the structure of the assignment exactly:
 | 11 | [Implementation, Monitoring & Evaluation](docs/11-implementation-monitoring-evaluation.md) | Implementation, monitoring and evaluation strategy |
 | 12 | [Expected Impact & Regulation](docs/12-impact-and-regulation.md) | Describe expected impact |
 | 13 | [Project plan & contributions](docs/13-project-plan-and-contributions.md) | Individual contributions |
-| 14 | [Presentation script](docs/14-presentation-script.md) | Slide-by-slide speaking script, timings, handovers, Q&A map |
+| 14 | [Presentation script](docs/14-presentation-script.md) | Spoken script for all 26 slides, timings, speaker split, live-demo choreography, Q&A map |
 
 ---
 
@@ -89,6 +93,8 @@ The app is bilingual (EN/DE, English by default) and loads the embedded L3. Via 
 node tools/run-tests.mjs     # 19 decision-logic test cases against l3/wundcheck-l3.json
 node tools/check-fhir.mjs    # 20 FHIR R4 conformance checks on the generated bundle
 node tools/check-hardcoding.mjs  # proves the L4 contains no clinical content
+node tools/build-presentation.js # rebuilds the 26-slide deck incl. speaker notes and QR code
+python3 tools/qr_test.py         # validates the QR encoder (RS vector, BCH, round-trip)
 python3 tools/embed-l3.py    # re-embed the L3 into the app after an L3 change
 ```
 

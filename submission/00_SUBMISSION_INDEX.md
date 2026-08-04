@@ -4,18 +4,21 @@
 
 A mini knowledge-based CDSS for the daily self-check of post-operative wounds, developed along the WHO SMART Guidelines layer model (L1 → L2 → L3 → L4).
 
+**Repository:** https://github.com/Sivanajani/smart-wound-guideline-app
+**Authors:** Feline Weger · Sivanajani Sivakumar
+
 ---
 
 ## What the assignment asks for, and where it is
 
 | Assignment requirement | File |
 |---|---|
-| **Presentation materials** | `WundCheck_CDSS_Presentation.pptx` · `.pdf` (15 slides + 10 backup slides, with speaker notes) · speaking script: `14-presentation-script.pdf` |
+| **Presentation materials** | `WundCheck_CDSS_Presentation.pptx` · `.pdf` — 16 slides + 10 backup slides. **The complete spoken script is in the speaker notes of every slide**; the same script with timings and the live-demo choreography is `14-presentation-script.pdf` |
 | **L2 — high-level workflow (BPMN)** | `BPMN_workflow-highlevel.bpmn` / `.svg` / `.png` · documented in `04-l2-workflow-bpmn.pdf` |
 | **L2 — data dictionary** | `05-l2-data-dictionary.pdf` — 48 elements |
 | **L2 — decision logic** | `06-l2-decision-logic.pdf` — 18 rules · additionally as a BPMN gateway cascade in `BPMN_workflow-app-detail.bpmn` |
 | **L3 documentation** | `08-l3-architecture.pdf` · machine-readable file: `L3_wundcheck-l3.json` |
-| **Pre-recorded demo** | `WundCheck_L4_Demo.mp4` — 1:46, 1920×1080, a screen recording of the running application: the full patient journey plus the threshold change |
+| **Demo** | Presented live from `L4_wundcheck-app.html`. `WundCheck_L4_Demo.mp4` — 1:46, 1920×1080 — is the same walkthrough recorded, included as a fallback and for asynchronous review |
 | **Access to the L4** | `L4_wundcheck-app.html` — open in any browser, no installation, works offline |
 
 ## Everything else
@@ -35,7 +38,7 @@ A mini knowledge-based CDSS for the daily self-check of post-operative wounds, d
 | 11 | `11-implementation-monitoring-evaluation.pdf` | Implementation, monitoring and evaluation |
 | 12 | `12-impact-and-regulation.pdf` | Expected impact (and regulatory classification) |
 | 13 | `13-project-plan-and-contributions.pdf` | Project plan, presentation outline, contributions |
-| 14 | `14-presentation-script.pdf` | Speaking script for all 25 slides — timings, handovers, Q&A jump targets |
+| 14 | `14-presentation-script.pdf` | Spoken script for all 26 slides — timings, speaker split, live-demo choreography, Q&A jump targets |
 | — | `README.pdf` | Repository overview |
 | — | `example-fhir-bundle.json` | Example FHIR R4 transaction bundle produced by the L4 |
 

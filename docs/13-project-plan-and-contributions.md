@@ -20,9 +20,9 @@
 | QA — risk-based testing | [10](10-qa-testing.md) | ✅ 19/19 logic · 20/20 FHIR · no-hardcoding check · 8 defects fixed |
 | Implementation, M&E strategy | [11](11-implementation-monitoring-evaluation.md) | ✅ |
 | Expected impact | [12](12-impact-and-regulation.md) | ✅ incl. SaMD classification |
-| Presentation | `submission/` | ✅ 15 slides + 10 backup slides, with speaker notes |
+| Presentation | `submission/` | ✅ 16 slides + 10 backup slides, with speaker notes |
 | Presentation script | [14](14-presentation-script.md) | ✅ word for word, with timings, handovers and Q&A jump targets |
-| Pre-recorded demo | `submission/WundCheck_L4_Demo.mp4` | ✅ 1:46, 1920×1080, screen recording of the running app |
+| Demo | live click-through of the L4 on slide 11 | ✅ choreography in [14 §SLIDE 11](14-presentation-script.md) · `submission/WundCheck_L4_Demo.mp4` (1:46) kept as the emergency fallback |
 | Submission package | `submission/` | ✅ 16 PDFs + L3 + L4 + BPMN sources + demo video + index |
 
 ---
@@ -33,7 +33,7 @@ Three items, none of which we can close without the group:
 
 | # | Task | Why it cannot be automated | Time |
 |---|---|---|---|
-| 1 | **Enter the names on slide 15** | The individual-contributions slide is explicitly required and 20 % of the grade is individual | 5 min |
+| 1 | **Set up the live demo on the presentation laptop** | The click-through must be rehearsed on the actual machine — see the checklist in [14 §14.5](14-presentation-script.md) | 20 min |
 | 2 | **Rehearse twice with a stopwatch** | Following [14](14-presentation-script.md); the first run will overrun — cut in the given order, do not speed up | 40 min |
 | 3 | **Clarify the submission channel** | Ask the lecturers during Tuesday morning's practical | 5 min |
 
@@ -41,33 +41,36 @@ Three items, none of which we can close without the group:
 
 ---
 
-## 13.3 Presentation — 15 Slides
+## 13.3 Presentation — 16 Slides, two speakers
 
-| # | Slide | Key message | Source | Time |
+Full spoken text for every slide, including the backups: **[14 · Presentation script](14-presentation-script.md)**.
+
+| # | Slide | Speaker | Key message | Time |
 |---|---|---|---|---|
-| 1 | Title | WundCheck — wound check in the hands of the patient | | 15 s |
-| 2 | Health Need & Scope | SSIs occur after hospital discharge — exactly when nobody is looking | [01](01-health-need-and-scope.md) | 55 s |
-| 3 | Personas & Scenario A | The call that is avoided is just as valuable as the one that is triggered | [02](02-personas-and-scenarios.md) | 55 s |
-| 4 | L1 & evidence appraisal | We deliberately discarded the statistically better instrument — it cannot be captured by laypersons | [03](03-l1-guidelines-and-evidence.md) | 55 s |
-| 5 | **Southampton mapping** | Our choice of images is not a UI whim, but a published grading | [03 §3.4](03-l1-guidelines-and-evidence.md#34-southampton-mapping) | 60 s |
-| 6 | BPMN high-level | Four lanes, one business rule task — the logic does not sit in the app | [04](04-l2-workflow-bpmn.md) | 50 s |
-| 7 | Data dictionary — key figures | 48 elements · 9 derived · 38 with terminology · 47 with FHIR mapping | [05](05-l2-data-dictionary.md) | 40 s |
-| 8 | Decision table & worst-first | False reassurance weighs more heavily than a false alarm | [06](06-l2-decision-logic.md) | 55 s |
-| 9 | **L1→L2 challenges** | Nine places where the guideline left us on our own | [07](07-l2-l1-to-l2-challenges.md) | 60 s |
-| 10 | L3 architecture decision | Author custom JSON, speak standards at the interface — and we can *prove* the app has no clinical content | [08](08-l3-architecture.md) | 50 s |
-| 11 | **Demo** | Green · orange · changing a threshold without a rebuild | `submission/` | 100 s |
-| 12 | QA: hazards, 8 bugs, residual risk | Two defects were invisible to document review and only surfaced when the rules were actually executed | [10](10-qa-testing.md) | 60 s |
-| 13 | Implementation & M&E | What we could not test, we monitor in deployment | [11](11-implementation-monitoring-evaluation.md) | 55 s |
-| 14 | Impact & SaMD | IMDRF Category II — with a rationale | [12](12-impact-and-regulation.md) | 45 s |
-| 15 | Individual contributions | | | 15 s |
+| 1 | Title | Feline | WundCheck — wound check in the hands of the patient | 0:15 |
+| 2 | Health need & scope | Feline | SSIs occur after discharge — exactly when nobody is looking | 0:42 |
+| 3 | Personas & Scenario A | Feline | The call that is avoided is worth as much as the one that is triggered | 0:35 |
+| 4 | L1 & evidence appraisal | Feline | We discarded the statistically better instrument — it cannot be captured by laypersons | 0:42 |
+| 5 | **Southampton mapping** | Feline | Our choice of images is a published grading, not a UI whim | 0:42 |
+| 6 | BPMN high-level | Feline | Four lanes, one business rule task — the logic is not in the app | 0:30 |
+| 7 | Data dictionary | Feline | 48 elements · 9 derived · 38 with terminology · 47 FHIR-mapped | 0:25 |
+| 8 | Decision table & worst-first | Feline | False reassurance weighs more than a false alarm | 0:38 |
+| 9 | **L1→L2 challenges** | Feline | Nine places where the guideline left us on our own | 0:38 |
+| 10 | L3 architecture decision | Sivanajani | Author custom JSON, speak standards at the interface — and *prove* the app holds no clinical content | 0:30 |
+| 11 | **Live demo** | Sivanajani | Green · orange + FHIR · changing a threshold without a rebuild | 1:50 |
+| 12 | QA: hazards, 8 defects, residual risk | Sivanajani | Three defects were invisible to document review | 0:45 |
+| 13 | Implementation & M&E | Sivanajani | What we could not test, we monitor in deployment | 0:35 |
+| 14 | Impact & SaMD | Sivanajani | IMDRF Category II — with a rationale | 0:28 |
+| 15 | Individual contributions | Sivanajani | Testing was cross-assigned; neither signed off their own layer | 0:15 |
+| 16 | Repository & QR code | Sivanajani | Everything is reproducible — scan and re-run the checks | 0:12 |
 
-**Total: ~10:10** as planned. The delivered script in [14](14-presentation-script.md) is timed to **9:45** — including the 1:46 demo video — and names, in order, what to cut if the talk runs long.
+**Total: 9:42**, inside the 10-minute limit. [14 §14.1](14-presentation-script.md) lists, in order, what to cut if the talk runs long.
 
-### Backup slides 16–25 *(after slide 15, for the Q&A)*
+### Backup slides 17–26 *(not presented — for the Q&A)*
 
-16 complete decision table · 17 test protocol T1–T19 · 18 hazard analysis and risk matrix · 19 BPMN detail process · 20 FHIR interface · 21 traceability L1 → FHIR · 22 the L3 in one screen · 23 data dictionary columns · 24 depth that did not fit into ten minutes · 25 sources
+17 complete decision table · 18 test protocol T1–T19 · 19 hazard analysis and risk matrix · 20 BPMN detail process · 21 FHIR interface · 22 traceability L1 → FHIR · 23 the L3 in one screen · 24 data dictionary columns · 25 depth that did not fit into ten minutes · 26 sources
 
-Jump targets per likely question are tabulated in [14 §14.2](14-presentation-script.md).
+Each has its own 20–30 s script in [14 §14.3](14-presentation-script.md); jump targets per likely question are tabulated in [14 §14.4](14-presentation-script.md).
 
 ### The key figures line for slide 7
 
@@ -91,7 +94,7 @@ This line carries all 10 minutes:
 
 ## 13.5 Q&A Preparation
 
-**Every person must be able to explain the entire project — the question round is addressed to everyone and accounts for 20 % of the grade.**
+**Both of us must be able to explain the entire project — the question round is addressed to everyone and accounts for 20 % of the grade.** Backup-slide jump targets per question: [14 §14.4](14-presentation-script.md).
 
 | Question | Where the answer is |
 |---|---|
@@ -116,14 +119,12 @@ This line carries all 10 minutes:
 
 ## 13.6 Individual Contributions
 
-> *To be filled in before submission. Be specific and reference artefacts — “everyone worked together" is the worst possible wording.*
-
 | Person | Area of responsibility | Artefacts | Presents |
 |---|---|---|---|
-| | Clinical Lead — L1 research, evidence appraisal, health need, personas, L1→L2 challenges | [01](01-health-need-and-scope.md), [02](02-personas-and-scenarios.md), [03](03-l1-guidelines-and-evidence.md), [07](07-l2-l1-to-l2-challenges.md) | Slides 2–5, 9 |
-| | L2 Lead — BPMN, data dictionary, decision table, terminology mapping | [04](04-l2-workflow-bpmn.md), [05](05-l2-data-dictionary.md), [06](06-l2-decision-logic.md), `diagrams/` | Slides 6–8 |
-| | Tech Lead — L3 schema, app, FHIR export, demo | [08](08-l3-architecture.md), [09](09-l4-implementation-ux.md), `l3/`, `l4/` | Slides 10–11 |
-| | QA & Implementation Lead — hazard analysis, test cases, bug log, M&E, impact, regulation | [10](10-qa-testing.md), [11](11-implementation-monitoring-evaluation.md), [12](12-impact-and-regulation.md) | Slides 12–14 |
+| **Feline Weger** · Biomedical Engineer | Clinical lead & L2 — L1 source research and evidence appraisal, health need and scope, personas and scenarios, Southampton → image mapping, the nine L1→L2 translation decisions, BPMN, data dictionary, decision table, terminology mapping | [01](01-health-need-and-scope.md), [02](02-personas-and-scenarios.md), [03](03-l1-guidelines-and-evidence.md), [04](04-l2-workflow-bpmn.md), [05](05-l2-data-dictionary.md), [06](06-l2-decision-logic.md), [07](07-l2-l1-to-l2-challenges.md), `diagrams/` | Slides 2–9 |
+| **Sivanajani Sivakumar** · MSc Medical Informatics | Technical lead & QA — L3 schema and authoring, the L4 application and expression engine, FHIR R4 interface, hazard analysis, test protocol, no-hardcoding check, bug log, implementation and M&E strategy, impact and regulatory classification | [08](08-l3-architecture.md), [09](09-l4-implementation-ux.md), [10](10-qa-testing.md), [11](11-implementation-monitoring-evaluation.md), [12](12-impact-and-regulation.md), `l3/`, `l4/`, `tools/` | Slides 10–16 |
+
+**Testing was cross-assigned on purpose: neither of us signed off the layer we wrote.** Both of us can answer questions on the whole project — the question round is addressed to everyone and accounts for 20 % of the grade.
 
 ---
 

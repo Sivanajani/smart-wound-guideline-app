@@ -1,5 +1,10 @@
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
+const SCRIPT = require("./speaker-notes");
+
+/* every slide, in creation order, plus the short director note attached to it */
+const SLIDES = [];
+const DIRNOTE = new Map();
 
 /* ---------- palette: severity is the only saturated colour in the deck ---------- */
 const INK    = "12202E", INK2 = "1D3148", SOFT = "F5F7FA", LINE = "DDE5EE",
@@ -40,6 +45,7 @@ function chain(s, active, dark) {
 
 function light(title, kicker, layer) {
   const s = pres.addSlide();
+  SLIDES.push(s);
   s.background = { color: WHITE };
   if (kicker) s.addText(kicker.toUpperCase(), {
     x: M, y: 0.42, w: 8.4, h: 0.24, fontFace: BODY, fontSize: 10.5, bold: true,
@@ -54,6 +60,7 @@ function light(title, kicker, layer) {
 }
 function dark(title) {
   const s = pres.addSlide();
+  SLIDES.push(s);
   s.background = { color: INK };
   return s;
 }
@@ -75,7 +82,7 @@ function body(s, txt, x, y, w, h, opt) {
   s.addText(txt, Object.assign({ x, y, w, h, fontFace: BODY, fontSize: 13,
     color: INK, margin: 0, valign: "top", lineSpacing: 18 }, opt || {}));
 }
-function note(s, t) { s.addNotes(t); }
+function note(s, t) { DIRNOTE.set(s, t); }
 
 /* ============================ 1 · TITLE ============================ */
 {
@@ -87,6 +94,9 @@ function note(s, t) { s.addNotes(t); }
   s.addText("We translated a guideline written for health professionals into an instrument for laypersons —\nand learned where that translation becomes dangerous.",
     { x: M, y: 3.5, w: 8.8, h: 0.9, fontFace: BODY, fontSize: 13.5, italic: true,
       color: PALE, margin: 0, lineSpacing: 20 });
+
+  s.addText("Feline Weger, Biomedical Engineer   ·   Sivanajani Sivakumar",
+    { x: M, y: 4.44, w: 9, h: 0.32, fontFace: BODY, fontSize: 13.5, color: "D6E2EE", margin: 0 });
 
   const stats = [["48", "data elements"], ["18", "decision rules"], ["9", "L1→L2 challenges"], ["8", "defects fixed"]];
   stats.forEach(([n, l], i) => {
@@ -484,10 +494,10 @@ function note(s, t) { s.addNotes(t); }
   ], { x: M + 6.76, y: 5.9, w: 4.8, h: 1.1, fontFace: BODY, fontSize: 9.5, color: "C9D6E4",
        margin: 0, valign: "top", paraSpaceAfter: 3, lineSpacing: 12 });
 
-  s.addText("▶  Demo video: submission/WundCheck_L4_Demo.mp4 · 1:46   ·   Single HTML file · offline · no installation · EN / DE",
+  s.addText("▶  Live in the browser   ·   Single HTML file · offline · no installation · no build step · EN / DE",
     { x: M, y: 7.06, w: 6.0, h: 0.3, fontFace: BODY, fontSize: 9.5, italic: true,
       color: PALE, margin: 0, align: "center" });
-  note(s, "PLAY THE VIDEO HERE — submission/WundCheck_L4_Demo.mp4, 1 min 46 s, 1920×1080, screen recording of the running app. Start it, then stay silent until the threshold change; only narrate over the last part. The screenshots on this slide are the fallback if the video does not start. Step 3 is the important one — it is the live proof that the layer separation is real.");
+  note(s, "LIVE DEMO — switch to the browser with l4/wundcheck-app.html already open, both windows arranged before the talk. Click-through: (1) day 6 case is pre-filled, pick 'calm & dry' + 'none' + scab yes, Evaluate -> GREEN; (2) New day, day 7 case, pick 'markedly reddened' + 'cloudy', Evaluate -> ORANGE, then Send to patient record; (3) open the L3 inspector, change fever_orange 38.0 -> 37.5, re-evaluate the borderline 37.6 case -> GREEN becomes ORANGE. Step 3 is the important one — it is the live proof that the layer separation is real. If anything hangs, stop clicking and use the two screenshots on this slide; the recorded walkthrough is in the submission package as a fallback.");
 }
 
 /* ============================ 12 · QA ============================ */
@@ -643,28 +653,75 @@ function note(s, t) { s.addNotes(t); }
   s.addText("Individual contributions", { x: M, y: 0.72, w: 9, h: 0.6, fontFace: HEAD,
     fontSize: 30, bold: true, color: WHITE, margin: 0 });
   const roles = [
-    ["Clinical lead", "L1 sources & evidence appraisal · health need · personas · L1→L2 challenges", "Slides 2–5, 9"],
-    ["L2 lead", "BPMN · data dictionary · decision table · terminology mapping", "Slides 6–8"],
-    ["Tech lead", "L3 schema · application · FHIR interface · demo", "Slides 10–11"],
-    ["QA & implementation lead", "hazard analysis · test protocol · bug log · M&E · impact · regulation", "Slides 12–14"]
+    ["Feline Weger", "Biomedical Engineer · clinical lead & L2",
+     ["L1 source research and evidence appraisal — CDC, NICE NG125, Southampton, Campwala et al.",
+      "Health system need, scope decision, three personas and the scenarios",
+      "Southampton → image-card mapping; the nine documented L1 → L2 translation decisions",
+      "BPMN high-level and detail process · data dictionary (48 elements) · decision table (18 rules)"],
+     "Slides 2 – 9"],
+    ["Sivanajani Sivakumar", "MSc Medical Informatics · technical lead & QA",
+     ["L3 schema and authoring — thresholds, terminology bindings, FHIR mappings, versioning",
+      "L4 application, expression engine, bilingual rendering, FHIR R4 transaction interface",
+      "Hazard analysis, 19 decision-logic tests, 20 FHIR checks, the no-hardcoding check, bug log",
+      "Implementation and M&E strategy · expected impact · SaMD classification"],
+     "Slides 10 – 16"]
   ];
-  roles.forEach(([r, w, p], i) => {
-    const y = 1.72 + i * 1.14;
-    s.addShape(pres.ShapeType.roundRect, { x: M, y, w: 12.1, h: 0.96, rectRadius: 0.09,
+  roles.forEach(([n, r, items, p], i) => {
+    const y = 1.62 + i * 2.32;
+    s.addShape(pres.ShapeType.roundRect, { x: M, y, w: 12.1, h: 2.12, rectRadius: 0.09,
       fill: { color: INK2 }, line: { color: INK2, width: 1 } });
-    s.addText(r, { x: M + 0.32, y: y + 0.12, w: 2.9, h: 0.34, fontFace: BODY, fontSize: 13, bold: true,
-      color: WHITE, margin: 0, valign: "middle" });
-    s.addText("Name  ______________", { x: M + 0.32, y: y + 0.46, w: 2.9, h: 0.3, fontFace: BODY,
-      fontSize: 10, color: "8FA3B8", margin: 0, valign: "middle" });
-    s.addText(w, { x: M + 3.4, y, w: 6.6, h: 0.96, fontFace: BODY, fontSize: 11.5,
-      color: "D6E2EE", margin: 0, valign: "middle" });
-    s.addText(p, { x: M + 10.1, y, w: 1.68, h: 0.96, fontFace: BODY, fontSize: 10.5,
-      color: "AFC2D6", margin: 0, valign: "middle", align: "right" });
+    s.addText(n, { x: M + 0.34, y: y + 0.18, w: 3.6, h: 0.34, fontFace: BODY, fontSize: 15,
+      bold: true, color: WHITE, margin: 0 });
+    s.addText(r, { x: M + 0.34, y: y + 0.56, w: 3.6, h: 0.5, fontFace: BODY, fontSize: 10.5,
+      color: "8FA3B8", margin: 0, lineSpacing: 14 });
+    s.addText(p, { x: M + 0.34, y: y + 1.5, w: 3.6, h: 0.3, fontFace: BODY, fontSize: 11,
+      bold: true, color: "AFC2D6", margin: 0 });
+    s.addText(items.map((t, k) => ({ text: t, options: { bullet: { indent: 13 }, breakLine: k < items.length - 1 } })),
+      { x: M + 4.2, y: y + 0.2, w: 7.6, h: 1.75, fontFace: BODY, fontSize: 11,
+        color: "D6E2EE", margin: 0, valign: "top", paraSpaceAfter: 5, lineSpacing: 15 });
   });
-  s.addText("Every member can answer questions on the whole project, not only their own part.",
+  s.addText("Both of us can answer questions on the whole project, not only on our own part. The QA of each other's layer was deliberately cross-assigned.",
     { x: M, y: 6.42, w: 12.1, h: 0.3, fontFace: BODY, fontSize: 11.5, italic: true,
       color: PALE, margin: 0 });
-  note(s, "Fill in the names before submission. Keep it concrete — 'we all worked together' is the weakest possible formulation.");
+  note(s, "Keep it concrete — 'we both worked on everything' is the weakest possible formulation. The cross-assignment is worth saying out loud: the person who wrote a layer did not sign off their own tests.");
+}
+
+/* ============================ 16 · REPOSITORY / CLOSING ============================ */
+{
+  const s = dark();
+  s.addText("Everything is in the repository", { x: M, y: 1.55, w: 7.4, h: 0.6, fontFace: HEAD,
+    fontSize: 30, bold: true, color: WHITE, margin: 0 });
+  s.addText("Documents, BPMN sources, the L3, the running L4, the test and conformance scripts — all of it, reproducible.",
+    { x: M, y: 2.22, w: 7.0, h: 0.7, fontFace: BODY, fontSize: 13.5, color: "C9D6E4",
+      margin: 0, lineSpacing: 19 });
+  s.addText("github.com/Sivanajani/smart-wound-guideline-app", { x: M, y: 3.06, w: 7.0, h: 0.4,
+    fontFace: BODY, fontSize: 15, bold: true, color: WHITE, margin: 0 });
+
+  const bits = [
+    ["docs/ 01–14", "every assignment item as its own document"],
+    ["l3/wundcheck-l3.json", "the machine-readable CDSS — 48 elements, 18 rules"],
+    ["l4/wundcheck-app.html", "one file, opens offline in any browser"],
+    ["tools/", "19 logic tests · 20 FHIR checks · the no-hardcoding check"]
+  ];
+  bits.forEach(([a, b], i) => {
+    const y = 3.72 + i * 0.62;
+    s.addText(a, { x: M, y, w: 2.9, h: 0.3, fontFace: BODY, fontSize: 11.5, bold: true,
+      color: "AFC2D6", margin: 0, valign: "middle" });
+    s.addText(b, { x: M + 3.0, y, w: 4.6, h: 0.3, fontFace: BODY, fontSize: 11,
+      color: "8FA3B8", margin: 0, valign: "middle" });
+  });
+
+  s.addShape(pres.ShapeType.roundRect, { x: M + 8.0, y: 1.5, w: 4.1, h: 4.6, rectRadius: 0.12,
+    fill: { color: WHITE }, line: { color: WHITE, width: 1 } });
+  s.addImage({ path: "repo-qr.png", x: M + 8.45, y: 1.95, w: 3.2, h: 3.2 });
+  s.addText("Scan for the full project", { x: M + 8.0, y: 5.28, w: 4.1, h: 0.3, align: "center",
+    fontFace: BODY, fontSize: 11.5, bold: true, color: INK, margin: 0 });
+  s.addText("Study prototype — not for clinical use.", { x: M + 8.0, y: 5.58, w: 4.1, h: 0.3,
+    align: "center", fontFace: BODY, fontSize: 10, italic: true, color: MUTED, margin: 0 });
+
+  s.addText("Thank you — questions?", { x: M, y: 6.34, w: 7.4, h: 0.44, fontFace: HEAD,
+    fontSize: 19, bold: true, color: WHITE, margin: 0 });
+  note(s, "Closing slide. Leave it up for the whole question round — the QR code stays on screen and the repository is the answer to half the possible questions. Backup slides follow from here (17–26); type the number and press Enter to jump.");
 }
 
 /* ============================ BACKUP SLIDES ============================ */
@@ -839,7 +896,7 @@ function backup(title, kicker) {
 
 /* B-L3 — the machine-readable layer shown, not just described */
 {
-  const s = backup("The L3 in one screen — this file is the CDSS", "L3 · wundcheck-l3.json v0.3.3");
+  const s = backup("The L3 in one screen — this file is the CDSS", "L3 · wundcheck-l3.json v0.3.4");
   const CODE = "Consolas";
   const lines = [
     ['{ "meta": {', 0, MUTED],
@@ -993,6 +1050,19 @@ function backup(title, kicker) {
     s.addText(r, { x: M + 10.1, y, w: 1.85, h: 0.46, fontFace: BODY, fontSize: 9.5, italic: true, color: MUTED, margin: 0, valign: "middle", align: "right" });
   });
 }
+
+/* ---------- speaker notes: the full spoken script, slide by slide ---------- */
+SLIDES.forEach((s, i) => {
+  const n = i + 1;
+  const parts = [];
+  if (SCRIPT[n]) parts.push(SCRIPT[n]);
+  const d = DIRNOTE.get(s);
+  if (d) parts.push("REMINDER\n" + "\u2500".repeat(46) + "\n" + d);
+  if (parts.length) s.addNotes(parts.join("\n\n"));
+});
+const missing = SLIDES.map((_, i) => i + 1).filter(n => !SCRIPT[n]);
+if (missing.length) console.log("!! slides without a script:", missing.join(", "));
+console.log(`slides: ${SLIDES.length} · scripted: ${SLIDES.length - missing.length}`);
 
 pres.writeFile({ fileName: "WundCheck_CDSS_Presentation.pptx" })
   .then(f => console.log("written:", f));

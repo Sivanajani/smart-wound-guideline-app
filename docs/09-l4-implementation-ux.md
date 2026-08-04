@@ -19,7 +19,7 @@
 
 **Full control over the image interaction.** The large-format wound appearance cards are not decoration but the central clinical solution to the translation problem ([C-01](07-l2-l1-to-l2-challenges.md)). With standard ODK widgets, the L4 would have dictated the UX — precisely the anti-pattern that Day 3 describes under “L4 constraints on L3".
 
-**Offline as the default state, not as a feature.** The app is a single HTML file with embedded React. After the first load it runs without any network connection at all. For home-based aftercare this is not an optimisation but a prerequisite (NFR-2).
+**Offline as the default state, not as a feature.** The app is a single HTML file with the L3 and all graphics embedded — no framework, no bundle, no network fetch. After the first load it runs without any network connection at all. For home-based aftercare this is not an optimisation but a prerequisite (NFR-2).
 
 **The price:** we forgo an existing ecosystem (server infrastructure, user management, synchronisation mechanisms of ODK Central). For a prototype this is acceptable; for a rollout a synchronisation layer would have to be added ([11 Implementation](11-implementation-monitoring-evaluation.md)).
 
