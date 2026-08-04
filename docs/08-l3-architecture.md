@@ -232,6 +232,9 @@ Everything that could conceivably be called clinical or configurational sits in 
 | FHIR endpoint, patient reference, canonical, alert recipient (`meta.fhir`) | Redirecting to a hospital server is one line |
 | `Observation.code`, alert prefix, Observation components | The interface payload is declared, not coded |
 | Which extras appear on the result badge (`meta.display`) | Presentation of derived values is declared |
+| The application mark (`meta.display.logo`, a data URI) | Loading a different L3 rebrands the app along with its content — the mark is also the browser tab icon, and stays inside the single file |
+| Guidance on a question and captions under the picture options (`help`, `options[].hint`) | Which question needs explaining is a clinical decision, so it is written where the question is |
+| Access codes and the values they seed (`meta.access`) | Who may open a check, and what the practice has already filled in |
 | Which sections are captured once (`once` flag) | The app does not know which section is clinical |
 
 The L4 knows only *types* (`select_one`, `calculated`, `date`), *structure* (sections, elements, rules) and *mechanics* (worst-first, two-pass, constraints before evaluation).

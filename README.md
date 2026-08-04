@@ -1,4 +1,6 @@
-﻿# WundCheck — Mini-CDSS for daily wound checks after surgery
+﻿<img src="assets/logo.png" alt="" width="112" align="right">
+
+# WundCheck — Mini-CDSS for daily wound checks after surgery
 
 > **FHNW MSc Medical Informatics · Clinical Decision Support Systems Module 2026**
 
